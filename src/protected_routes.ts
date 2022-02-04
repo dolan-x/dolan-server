@@ -13,46 +13,48 @@ import { jwt } from "./middleware/mod.ts";
 
 const protectedRouter = new Router({ prefix: `/${API_VERSION}` });
 
+protectedRouter.use(jwt);
+
 // Create post route
-protectedRouter.post(`/posts`, jwt, posts.createPost);
+protectedRouter.post(`/posts`, posts.createPost);
 
 // Update post route
-protectedRouter.put(`/posts/:id`, jwt, posts.updatePost);
+protectedRouter.put(`/posts/:id`, posts.updatePost);
 
 // Delete post route
-protectedRouter.delete(`/posts/:id`, jwt, posts.deletePost);
+protectedRouter.delete(`/posts/:id`, posts.deletePost);
 
 // Create tag route
-protectedRouter.post(`/tags`, jwt, tags.createTag);
+protectedRouter.post(`/tags`, tags.createTag);
 
 // Update tag route
-protectedRouter.put(`/tags/:id`, jwt, tags.updateTag);
+protectedRouter.put(`/tags/:id`, tags.updateTag);
 
 // Delete tag route
-protectedRouter.delete(`/tags/:id`, jwt, tags.deleteTag);
+protectedRouter.delete(`/tags/:id`, tags.deleteTag);
 
 // Create category route
-protectedRouter.post(`/categories`, jwt, categories.createCategory);
+protectedRouter.post(`/categories`, categories.createCategory);
 
 // Update category route
-protectedRouter.put(`/categories/:id`, jwt, categories.updateCategory);
+protectedRouter.put(`/categories/:id`, categories.updateCategory);
 
 // Delete category route
-protectedRouter.delete(`/categories/:id`, jwt, categories.deleteCategory);
+protectedRouter.delete(`/categories/:id`, categories.deleteCategory);
 
 // Create author route
-protectedRouter.post(`/authors`, jwt, authors.createAuthor);
+protectedRouter.post(`/authors`, authors.createAuthor);
 
 // Update author route
-protectedRouter.put(`/authors/:id`, jwt, authors.updateAuthor);
+protectedRouter.put(`/authors/:id`, authors.updateAuthor);
 
 // Delete author route
-protectedRouter.delete(`/authors/:id`, jwt, authors.deleteAuthor);
+protectedRouter.delete(`/authors/:id`, authors.deleteAuthor);
 
 // Update config route
-protectedRouter.put(`/config/:name`, jwt, config.updateConfig);
+protectedRouter.put(`/config/:name`, config.updateConfig);
 
 // Update user route
-protectedRouter.put(`/user`, jwt, user.updateUser);
+protectedRouter.put(`/user`, user.updateUser);
 
 export { protectedRouter };
