@@ -11,9 +11,9 @@ export type Config = {
 const definedConfig: Config = {
   maxPageSize: 10, // TODO(@so1ve): 之后要从数据库获取，记得删掉这一行和下面的
   storageType: "", // SupportedStorage
-  leanAppId: "" // Your app ID,
-  leanAppKey: "" // Your app key,
-  leanMasterKey: "" // Your master key,
+  leanAppId: "", // Your app ID,
+  leanAppKey: "", // Your app key,
+  leanMasterKey: "", // Your master key,
   // leanServer: "" // Your server URL,
 };
 const envConfig = {
