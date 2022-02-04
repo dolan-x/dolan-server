@@ -1,5 +1,5 @@
 // Copyright 2022 the Dolan authors. All rights reserved. MIT license.
-import "https://deno.land/x/xhr@0.1.2/mod.ts"; // XMLHttpRequest的Polyfill，给没有皮炎子的LeanCloud Storage用 这个比一直报错
+import "https://deno.land/x/xhr@0.1.2/mod.ts"; // XMLHttpRequest的Polyfill
 import { Application, colors, parse } from "../deps.ts";
 import { unprotectedRouter } from "./unprotected_routes.ts";
 import { protectedRouter } from "./protected_routes.ts";
@@ -17,7 +17,6 @@ const PORT = parsedArgs.p || parsedArgs.port || 4000;
 app.use(errorHandler);
 app.use(unprotectedRouter.routes())
   .use(unprotectedRouter.allowedMethods({ throw: true }));
-// TODO(@so1ve): JWT认证要搞起
 app.use(protectedRouter.routes())
   .use(protectedRouter.allowedMethods({ throw: true }));
 app.use(setContentType);
