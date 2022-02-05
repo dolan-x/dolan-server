@@ -3,8 +3,9 @@ import { config, helpers, RouterMiddleware, shared } from "../../deps.ts";
 import { createResponse, getIncrementId } from "../lib/mod.ts";
 import { getStorage } from "../service/storage/mod.ts";
 
-const storage = getStorage({ tableName: "Tags" })!;
+const tagsStorage = getStorage({ tableName: "Tags" })!;
 const postsStorage = getStorage({ tableName: "Posts" })!;
+const configStorage = getStorage({ tableName: "Config" })!;
 
 /** GET /{VERSION}/tags */
 export const getTags: RouterMiddleware<string> = async (ctx) => {
@@ -16,12 +17,12 @@ export const getTags: RouterMiddleware<string> = async (ctx) => {
     { mergeParams: true },
   );
   const paramPageSize = Number(_paramPageSize); // 每页标签数
-  const { maxPageSize } = config; // 最大每页标签数
+  const { maxPageSize = 10 } = await configStorage.select({ name: "tags" }); // 最大每页标签数
   const pageSize = paramPageSize // 最终每页标签数
     ? (paramPageSize >= maxPageSize ? maxPageSize : paramPageSize)
     : maxPageSize;
   const page = Number(_paramPage); // 当前页数
-  const tags = await storage.select(
+  const tags = await tagsStorage.select(
     {},
     {
       desc: "updated", // 避免与Leancloud的字段冲突
@@ -41,7 +42,7 @@ export const getTags: RouterMiddleware<string> = async (ctx) => {
 export const getTag: RouterMiddleware<string> = async (ctx) => {
   const { id: _id } = ctx.params;
   const id = Number(_id);
-  const tag = (await storage.select(
+  const tag = (await tagsStorage.select(
     { id },
     {
       desc: "updated",
@@ -90,19 +91,19 @@ export const createTag: RouterMiddleware<string> = async (ctx) => {
     name = "",
     description = "",
   } = requestBody;
-  const duplicate = await storage.select({ name });
+  const duplicate = await tagsStorage.select({ name });
   if (duplicate.length) {
     ctx.throw(409, `Tag(Name: ${name}) already exists`);
     return;
   }
-  const tags: shared.Tag[] = await storage.select(
+  const tags: shared.Tag[] = await tagsStorage.select(
     {},
     {
       fields: ["id"],
     },
   );
   const currentId = getIncrementId(tags);
-  const resp = await storage.add({
+  const resp = await tagsStorage.add({
     id: currentId,
     name,
     description,
@@ -116,7 +117,7 @@ export const createTag: RouterMiddleware<string> = async (ctx) => {
 export const updateTag: RouterMiddleware<string> = async (ctx) => {
   const { id: _id } = ctx.params;
   const id = Number(_id);
-  const exists = (await storage.select({ id }))[0];
+  const exists = (await tagsStorage.select({ id }))[0];
   if (!exists) {
     ctx.throw(404, `Tag (ID: ${id}) does not exist`);
     return;
@@ -127,7 +128,7 @@ export const updateTag: RouterMiddleware<string> = async (ctx) => {
   } catch {
     requestBody = {};
   }
-  const resp = await storage.update(
+  const resp = await tagsStorage.update(
     {
       ...requestBody,
       id,
@@ -141,11 +142,11 @@ export const updateTag: RouterMiddleware<string> = async (ctx) => {
 export const deleteTag: RouterMiddleware<string> = async (ctx) => {
   const { id: _id } = ctx.params;
   const id = Number(_id);
-  const exists = (await storage.select({ id }))[0];
+  const exists = (await tagsStorage.select({ id }))[0];
   if (!exists) {
     ctx.throw(404, `Tag (ID: ${id}) does not exist`);
     return;
   }
-  await storage.delete({ id });
+  await tagsStorage.delete({ id });
   ctx.response.body = createResponse();
 };

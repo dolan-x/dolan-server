@@ -34,7 +34,7 @@ export const userLogin: RouterMiddleware<string> = async (ctx) => {
     data: {
       ...user,
       password: null,
-      userNameMd5: await md5(user.username.toLowerCase()),
+      usernameMd5: await md5(user.username.toLowerCase()),
       token: await createJwt(
         { alg: "HS512", typ: "JWT" },
         { username: user.username },

@@ -1,6 +1,6 @@
 import { RouterMiddleware, shared } from "../../deps.ts";
 
-import { createResponse } from "../lib/mod.ts";
+import { createResponse, initValues } from "../lib/mod.ts";
 import { getStorage } from "../service/storage/mod.ts";
 
 const postsStorage = getStorage({ tableName: "Posts" })!;
@@ -11,7 +11,8 @@ export const init: RouterMiddleware<string> = async (ctx) => {
     ctx.throw(400, "Already initialized");
     return;
   }
-  await postsStorage.add<shared.Post>({
+
+  const addPost = postsStorage.add<shared.Post>({
     id: 1,
     title: "Hello World",
     content: "# Hello World\nYour first post!",
@@ -25,13 +26,38 @@ export const init: RouterMiddleware<string> = async (ctx) => {
     tags: [],
     postMetas: {},
   });
-  await configStorage.add({
+  const addSiteConfig = configStorage.add({
     name: "site",
-    value: {},
+    value: initValues.site,
   });
-  await configStorage.add({
+  const addPostsConfig = configStorage.add({
+    name: "posts",
+    value: initValues.posts,
+  });
+  const addCategoriesConfig = configStorage.add({
+    name: "categories",
+    value: initValues.categories,
+  });
+  const addTagsConfig = configStorage.add({
+    name: "tags",
+    value: initValues.tags,
+  });
+  const addAuthorsConfig = configStorage.add({
+    name: "authors",
+    value: initValues.authors,
+  });
+  const addCustomConfig = configStorage.add({
     name: "custom",
-    value: {},
+    value: initValues.custom,
   });
+  await Promise.all([
+    addPost,
+    addSiteConfig,
+    addPostsConfig,
+    addCategoriesConfig,
+    addTagsConfig,
+    addAuthorsConfig,
+    addCustomConfig,
+  ]);
   ctx.response.body = createResponse({ data: {} });
 };

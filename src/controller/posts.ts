@@ -1,9 +1,10 @@
-import { config, helpers, RouterMiddleware, shared } from "../../deps.ts";
+import { helpers, RouterMiddleware, shared } from "../../deps.ts";
 
 import { createResponse, getIncrementId } from "../lib/mod.ts";
 import { getStorage } from "../service/storage/mod.ts";
 
-const storage = getStorage({ tableName: "Posts" })!;
+const postsStorage = getStorage({ tableName: "Posts" })!;
+const configStorage = getStorage({ tableName: "Config" })!;
 
 // TODO(@so1ve): 携带有合法JWT Token且query: draft=true时，返回内容包括草稿箱的文章
 /** GET /{VERSION}/posts */
@@ -16,12 +17,12 @@ export const getPosts: RouterMiddleware<string> = async (ctx) => {
     { mergeParams: true },
   );
   const paramPageSize = Number(_paramPageSize); // 每页文章数
-  const { maxPageSize } = config; // 最大每页文章数
+  const { maxPageSize = 10 } = await configStorage.select({ name: "posts" }); // 最大每页文章数
   const pageSize = paramPageSize // 最终每页文章数
     ? (paramPageSize >= maxPageSize ? maxPageSize : paramPageSize)
     : maxPageSize;
   const page = Number(_paramPage); // 当前页数
-  const posts = await storage.select(
+  const posts = await postsStorage.select(
     { status: ["NOT IN", ["draft"]] },
     {
       desc: "updated", // 避免与Leancloud的字段冲突
@@ -51,7 +52,7 @@ export const getPosts: RouterMiddleware<string> = async (ctx) => {
 export const getPost: RouterMiddleware<string> = async (ctx) => {
   const { id: _id } = ctx.params;
   const id = Number(_id);
-  const post = (await storage.select(
+  const post = (await postsStorage.select(
     { id },
     {
       fields: [
@@ -82,7 +83,7 @@ export const createPost: RouterMiddleware<string> = async (ctx) => {
   } catch {
     requestBody = {};
   }
-  const posts: shared.Post[] = await storage.select(
+  const posts: shared.Post[] = await postsStorage.select(
     {},
     {
       fields: ["id"],
@@ -105,7 +106,7 @@ export const createPost: RouterMiddleware<string> = async (ctx) => {
   if (!excerpt) {
     excerpt = content.slice(0, 100); // 没有摘要则截取前100个字符
   }
-  const resp = await storage.add({
+  const resp = await postsStorage.add({
     id: currentId,
     title,
     content,
@@ -128,7 +129,7 @@ export const createPost: RouterMiddleware<string> = async (ctx) => {
 export const updatePost: RouterMiddleware<string> = async (ctx) => {
   const { id: _id } = ctx.params;
   const id = Number(_id);
-  const exists = (await storage.select({ id }))[0];
+  const exists = (await postsStorage.select({ id }))[0];
   if (!exists) {
     ctx.throw(404, `Post(ID: ${id}) does not exist`);
     return;
@@ -139,7 +140,7 @@ export const updatePost: RouterMiddleware<string> = async (ctx) => {
   } catch {
     requestBody = {};
   }
-  const resp = await storage.update(
+  const resp = await postsStorage.update(
     {
       ...requestBody,
       id,
@@ -153,11 +154,11 @@ export const updatePost: RouterMiddleware<string> = async (ctx) => {
 export const deletePost: RouterMiddleware<string> = async (ctx) => {
   const { id: _id } = ctx.params;
   const id = Number(_id);
-  const exists = (await storage.select({ id }))[0];
+  const exists = (await postsStorage.select({ id }))[0];
   if (!exists) {
     ctx.throw(404, `Post(ID: ${id}) does not exist`);
     return;
   }
-  await storage.delete({ id });
+  await postsStorage.delete({ id });
   ctx.response.body = createResponse();
 };

@@ -4,8 +4,9 @@ import { config, helpers, RouterMiddleware, shared } from "../../deps.ts";
 import { createResponse, getIncrementId } from "../lib/mod.ts";
 import { getStorage } from "../service/storage/mod.ts";
 
-const storage = getStorage({ tableName: "Categories" })!;
+const categoriesStorage = getStorage({ tableName: "Categories" })!;
 const postsStorage = getStorage({ tableName: "Posts" })!;
+const configStorage = getStorage({ tableName: "Config" })!;
 
 /** GET /{VERSION}/categories */
 export const getCategories: RouterMiddleware<string> = async (ctx) => {
@@ -17,12 +18,14 @@ export const getCategories: RouterMiddleware<string> = async (ctx) => {
     { mergeParams: true },
   );
   const paramPageSize = Number(_paramPageSize); // 每页分类数
-  const { maxPageSize } = config; // 最大每页分类数
+  const { maxPageSize = 10 } = await configStorage.select({
+    name: "categories",
+  }); // 最大每页分类数
   const pageSize = paramPageSize // 最终每页分类数
     ? (paramPageSize >= maxPageSize ? maxPageSize : paramPageSize)
     : maxPageSize;
   const page = Number(_paramPage); // 当前页数
-  const categories = await storage.select(
+  const categories = await categoriesStorage.select(
     {},
     {
       desc: "updated", // 避免与Leancloud的字段冲突
@@ -42,7 +45,7 @@ export const getCategories: RouterMiddleware<string> = async (ctx) => {
 export const getCategory: RouterMiddleware<string> = async (ctx) => {
   const { id: _id } = ctx.params;
   const id = Number(_id);
-  const category = (await storage.select(
+  const category = (await categoriesStorage.select(
     { id },
     {
       desc: "updated",
@@ -93,19 +96,19 @@ export const createCategory: RouterMiddleware<string> = async (ctx) => {
     name = "",
     description = "",
   } = requestBody;
-  const duplicate = await storage.select({ name });
+  const duplicate = await categoriesStorage.select({ name });
   if (duplicate.length) {
     ctx.throw(409, `Category(Name: ${name}) already exists`);
     return;
   }
-  const categories: shared.Category[] = await storage.select(
+  const categories: shared.Category[] = await categoriesStorage.select(
     {},
     {
       fields: ["id"],
     },
   );
   const currentId = getIncrementId(categories);
-  const resp = await storage.add({
+  const resp = await categoriesStorage.add({
     id: currentId,
     name,
     description,
@@ -119,7 +122,7 @@ export const createCategory: RouterMiddleware<string> = async (ctx) => {
 export const updateCategory: RouterMiddleware<string> = async (ctx) => {
   const { id: _id } = ctx.params;
   const id = Number(_id);
-  const exists = (await storage.select({ id }))[0];
+  const exists = (await categoriesStorage.select({ id }))[0];
   if (!exists) {
     ctx.throw(404, `Category(ID: ${id}) does not exist`);
     return;
@@ -130,7 +133,7 @@ export const updateCategory: RouterMiddleware<string> = async (ctx) => {
   } catch {
     requestBody = {};
   }
-  const resp = await storage.update(
+  const resp = await categoriesStorage.update(
     {
       ...requestBody,
       id,
@@ -144,11 +147,11 @@ export const updateCategory: RouterMiddleware<string> = async (ctx) => {
 export const deleteCategory: RouterMiddleware<string> = async (ctx) => {
   const { id: _id } = ctx.params;
   const id = Number(_id);
-  const exists = (await storage.select({ id }))[0];
+  const exists = (await categoriesStorage.select({ id }))[0];
   if (!exists) {
     ctx.throw(404, `Category(ID: ${id}) does not exist`);
     return;
   }
-  await storage.delete({ id });
+  await categoriesStorage.delete({ id });
   ctx.response.body = createResponse();
 };

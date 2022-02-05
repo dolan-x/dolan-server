@@ -2,7 +2,6 @@ import { YAML } from "./deps.ts";
 import { SupportedStorage } from "./src/types/mod.ts";
 
 type Config = {
-  maxPageSize: number;
   storageType: SupportedStorage;
   leanAppId?: string;
   leanAppKey?: string;
@@ -16,9 +15,8 @@ try {
   const data = await Deno.readFile("dolanConfig.yml");
   const yaml = decoder.decode(data);
   definedConfig = YAML.parse(yaml) as Partial<Config>;
-} catch (e) {}
+} catch { /* noop */ }
 const envConfig = {
-  maxPageSize: Number(Deno.env.get("MAX_PAGE_SIZE")),
   storageType: Deno.env.get("STORAGE_TYPE"), // SupportedStorage
   leanAppId: Deno.env.get("LEAN_APP_ID"),
   leanAppKey: Deno.env.get("LEAN_APP_KEY"),

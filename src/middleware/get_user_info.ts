@@ -15,7 +15,6 @@ export const getUserInfo: RouterMiddleware<string> = async (ctx, next) => {
   try {
     const token = authHeader.replace("Bearer ", "");
     const payload = await verifyJwt(token, jwtKey);
-    console.log(payload);
     const user = (await storage.select({ username: payload.username }))[0];
     ctx.state.userInfo = user;
   } catch {}
