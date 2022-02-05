@@ -5,6 +5,7 @@ import {
   authors,
   categories,
   config,
+  init,
   posts,
   tags,
   user,
@@ -56,5 +57,8 @@ protectedRouter.put(`/config/:name`, config.updateConfig);
 
 // Update user route
 protectedRouter.put(`/user`, user.updateUser);
+
+// Init route
+protectedRouter.post(`/init`, init.init);
 
 export { protectedRouter };
