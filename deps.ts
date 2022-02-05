@@ -2,6 +2,7 @@ export { default as AV } from "https://esm.sh/leancloud-storage@4.12.0?target=es
 export * as leanAdapters from "https://esm.sh/@leancloud/platform-adapters-node@1.5.2?target=es2021";
 export * as shared from "https://esm.sh/@dolan-x/shared@0.0.6";
 export * as _ from "https://deno.land/x/lodash@4.17.15-es/lodash.js";
+export { default as YAML } from "https://esm.sh/yaml@2.0.0-10?target=es2021";
 export {
   Application,
   helpers,

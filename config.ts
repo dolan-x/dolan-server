@@ -1,6 +1,7 @@
+import { YAML } from "./deps.ts";
 import { SupportedStorage } from "./src/types/mod.ts";
 
-export type Config = {
+type Config = {
   maxPageSize: number;
   storageType: SupportedStorage;
   leanAppId?: string;
@@ -8,14 +9,14 @@ export type Config = {
   leanMasterKey?: string;
   leanServer?: string;
 };
-const definedConfig: Config = {
-  maxPageSize: 10, // TODO(@so1ve): 之后要从数据库获取，记得删掉这一行和下面的
-  storageType: "leancloud", // SupportedStorage
-  leanAppId: "", // Your app ID,
-  leanAppKey: "", // Your app key,
-  leanMasterKey: "", // Your master key,
-  // leanServer: "" // Your server URL,
-};
+// 从dolanConfig.yml中读取配置
+let definedConfig: Partial<Config> = {};
+const decoder = new TextDecoder("utf-8");
+try {
+  const data = await Deno.readFile("dolanConfig.yml");
+  const yaml = decoder.decode(data);
+  definedConfig = YAML.parse(yaml) as Partial<Config>;
+} catch (e) {}
 const envConfig = {
   maxPageSize: Number(Deno.env.get("MAX_PAGE_SIZE")),
   storageType: Deno.env.get("STORAGE_TYPE"), // SupportedStorage
@@ -30,5 +31,5 @@ for (const [key, value] of Object.entries(envConfig)) {
     validEnvConfig[key] = value;
   }
 }
-const config: Config = Object.assign(definedConfig, validEnvConfig); // 合并（环境变量优先级高于定义的变量）
+const config: Config = Object.assign(definedConfig, validEnvConfig) as Config; // 合并（环境变量优先级高于定义的变量）
 export { config };
