@@ -1,4 +1,4 @@
-import { config } from "../../../deps.ts";
+import { config } from "../../../config.ts";
 import { SupportedStorage } from "../../types/mod.ts";
 import BaseStorage from "./base.ts";
 import LeancloudStorage from "./leancloud.ts";

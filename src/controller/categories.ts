@@ -1,5 +1,5 @@
 // TODO(@so1ve): 增加子分类功能
-import { config, helpers, RouterMiddleware, shared } from "../../deps.ts";
+import { helpers, RouterMiddleware, shared } from "../../deps.ts";
 
 import { createResponse, getIncrementId } from "../lib/mod.ts";
 import { getStorage } from "../service/storage/mod.ts";

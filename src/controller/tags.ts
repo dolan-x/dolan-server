@@ -1,4 +1,4 @@
-import { config, helpers, RouterMiddleware, shared } from "../../deps.ts";
+import { helpers, RouterMiddleware, shared } from "../../deps.ts";
 
 import { createResponse, getIncrementId } from "../lib/mod.ts";
 import { getStorage } from "../service/storage/mod.ts";

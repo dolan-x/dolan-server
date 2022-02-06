@@ -1,6 +1,8 @@
 // The source code is from [Waline](https://github.com/walinejs/waline/blob/main/packages/server/src/service/storage/leancloud.js) and has been modified to apply to typescript.
 // Thanks!
-import { _, AV, config, leanAdapters } from "../../../deps.ts";
+import { _, AV, leanAdapters } from "../../../deps.ts";
+
+import { config } from "../../../config.ts";
 import BaseStorage, { Access, SelectOptions, Where } from "./base.ts";
 
 AV.setAdapters(leanAdapters);
