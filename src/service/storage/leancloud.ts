@@ -1,6 +1,6 @@
 // The source code is from [Waline](https://github.com/walinejs/waline/blob/main/packages/server/src/service/storage/leancloud.js) and has been modified to apply to typescript.
 // Thanks!
-import { _, AV, leanAdapters } from "../../../deps.ts";
+import { _, AV, leanAdapters, omit } from "../../../deps.ts";
 
 import { config } from "../../../config.ts";
 import BaseStorage, { Access, SelectOptions, Where } from "./base.ts";
@@ -135,6 +135,13 @@ class LeancloudStorage extends BaseStorage {
       ret = await this._select(where, options);
       data = data.concat(ret);
     } while (ret.length === 100);
+    data = data.map((item) =>
+      omit(item as Record<string, unknown>, [
+        "createdAt",
+        "updatedAt",
+        "objectId",
+      ])
+    ) as unknown as T;
 
     return data as unknown as T;
   }

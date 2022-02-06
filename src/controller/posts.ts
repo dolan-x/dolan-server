@@ -7,11 +7,15 @@ const postsStorage = getStorage({ tableName: "Posts" })!;
 const configStorage = getStorage({ tableName: "Config" })!;
 
 // TODO(@so1ve): 携带有合法JWT Token且query: draft=true时，返回内容包括草稿箱的文章
-/** GET /{VERSION}/posts */
+/**
+ * GET /{VERSION}/posts
+ * Query: pageSize, page, desc
+ */
 export const getPosts: RouterMiddleware<string> = async (ctx) => {
   const {
     pageSize: _paramPageSize,
     page: _paramPage = 0,
+    desc = "updated",
   } = helpers.getQuery(
     ctx,
     { mergeParams: true },
@@ -25,7 +29,7 @@ export const getPosts: RouterMiddleware<string> = async (ctx) => {
   const posts = await postsStorage.select(
     { status: ["NOT IN", ["draft"]] },
     {
-      desc: "updated", // 避免与Leancloud的字段冲突
+      desc, // 避免与Leancloud的字段冲突
       limit: pageSize,
       offset: Math.max((page - 1) * pageSize, 0),
       fields: [
