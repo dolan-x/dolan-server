@@ -7,6 +7,7 @@ const postsStorage = getStorage({ tableName: "Posts" })!;
 const configStorage = getStorage({ tableName: "Config" })!;
 
 // TODO(@so1ve): 携带有合法JWT Token且query: draft=true时，返回内容包括草稿箱的文章
+// TODO(@so1ve): 增加hidden属性
 /**
  * GET /{VERSION}/posts
  * Query: pageSize, page, desc

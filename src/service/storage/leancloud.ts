@@ -177,7 +177,12 @@ class LeancloudStorage extends BaseStorage {
     instance.setACL(acl);
 
     const resp = await instance.save();
-    return resp.toJSON() as U;
+    return omit(resp.toJSON(), [
+      "ACL",
+      "createdAt",
+      "updatedAt",
+      "objectId",
+    ]) as U;
   }
 
   /**

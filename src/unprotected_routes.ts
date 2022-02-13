@@ -5,14 +5,16 @@ import {
   authors,
   categories,
   config,
+  pages,
   posts,
   tags,
-  token,
-  user,
+  users,
 } from "./controller/mod.ts";
 import { getUserInfo } from "./middleware/mod.ts";
 
 const unprotectedRouter = new Router({ prefix: `/${API_VERSION}` });
+
+unprotectedRouter.use(getUserInfo);
 
 // Post list route
 unprotectedRouter.get(`/posts`, posts.getPosts);
@@ -47,16 +49,22 @@ unprotectedRouter.get("/authors/:id/posts", authors.getAuthorPosts);
 // Author detail route
 unprotectedRouter.get("/authors/:id", authors.getAuthor);
 
+// Page list route
+unprotectedRouter.get(`/pages`, pages.getPages);
+
+// Post detail route
+unprotectedRouter.get(`/pages/:id`, pages.getPage);
+
 // Config detail route
 unprotectedRouter.get("/config/:name", config.getConfig);
 
 // User Info route
-unprotectedRouter.get("/token", getUserInfo, token.getUserInfo);
+unprotectedRouter.get("/users/whoAmI", users.getUserInfo);
 
 // Login route
-unprotectedRouter.post("/token", token.userLogin);
+unprotectedRouter.post("/users/login", users.loginUser);
 
 // Register route
-unprotectedRouter.post("/user", user.registerUser);
+unprotectedRouter.post("/users/signup", users.signupUser);
 
 export { unprotectedRouter };

@@ -6,9 +6,10 @@ import {
   categories,
   config,
   init,
+  pages,
   posts,
   tags,
-  user,
+  users,
 } from "./controller/mod.ts";
 import { jwt } from "./middleware/mod.ts";
 
@@ -52,11 +53,20 @@ protectedRouter.put(`/authors/:id`, authors.updateAuthor);
 // Delete author route
 protectedRouter.delete(`/authors/:id`, authors.deleteAuthor);
 
+// Create page route
+protectedRouter.post(`/pages`, pages.createPage);
+
+// Update page route
+protectedRouter.put(`/pages/:id`, pages.updatePage);
+
+// Delete page route
+protectedRouter.delete(`/pages/:id`, pages.deletePage);
+
 // Update config route
 protectedRouter.put(`/config/:name`, config.updateConfig);
 
 // Update user route
-protectedRouter.put(`/user`, user.updateUser);
+protectedRouter.put(`/user`, users.updateUser);
 
 // Init route
 protectedRouter.post(`/init`, init.init);
