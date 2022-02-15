@@ -4,3 +4,4 @@ export { default as categories } from "./config_categories.json" assert { type: 
 export { default as tags } from "./config_tags.json" assert { type: "json" };
 export { default as authors } from "./config_authors.json" assert { type: "json" };
 export { default as custom } from "./config_custom.json" assert { type: "json" };
+export { default as userInjections } from "./config_user_injections.json" assert { type: "json" };

@@ -7,12 +7,12 @@ const postsStorage = getStorage({ tableName: "Posts" })!;
 const configStorage = getStorage({ tableName: "Config" })!;
 
 export const init: RouterMiddleware<string> = async (ctx) => {
-  if (await configStorage.count({}) > 0) {
+  if (await configStorage.count() > 0) {
     ctx.throw(400, "Already initialized");
     return;
   }
 
-  const addPost = postsStorage.add<shared.Post>({
+  await postsStorage.add<shared.Post>({
     id: 1,
     title: "Hello World",
     content: "# Hello World\nYour first post!",
@@ -26,38 +26,36 @@ export const init: RouterMiddleware<string> = async (ctx) => {
     tags: [],
     postMetas: {},
   });
-  const addSiteConfig = configStorage.add({
-    name: "site",
-    value: initValues.site,
-  });
-  const addPostsConfig = configStorage.add({
-    name: "posts",
-    value: initValues.posts,
-  });
-  const addCategoriesConfig = configStorage.add({
-    name: "categories",
-    value: initValues.categories,
-  });
-  const addTagsConfig = configStorage.add({
-    name: "tags",
-    value: initValues.tags,
-  });
-  const addAuthorsConfig = configStorage.add({
-    name: "authors",
-    value: initValues.authors,
-  });
-  const addCustomConfig = configStorage.add({
-    name: "custom",
-    value: initValues.custom,
-  });
-  await Promise.all([
-    addPost,
-    addSiteConfig,
-    addPostsConfig,
-    addCategoriesConfig,
-    addTagsConfig,
-    addAuthorsConfig,
-    addCustomConfig,
+  await configStorage.addAll([
+    {
+      name: "site",
+      value: initValues.site,
+    },
+    {
+      name: "posts",
+      value: initValues.posts,
+    },
+    {
+      name: "categories",
+      value: initValues.categories,
+    },
+    {
+      name: "tags",
+      value: initValues.tags,
+    },
+    {
+      name: "authors",
+      value: initValues.authors,
+    },
+    {
+      name: "custom",
+      value: initValues.custom,
+    },
+    {
+      name: "userInjections",
+      value: initValues.userInjections,
+    },
   ]);
-  ctx.response.body = createResponse({ data: {} });
+
+  ctx.response.body = createResponse({ data: "Success" });
 };
