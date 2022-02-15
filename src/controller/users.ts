@@ -53,7 +53,7 @@ export const updateUser: RouterMiddleware<string> = async (ctx) => {
   ctx.response.body = createResponse({ data: {} });
 };
 
-/** GET /{VERSION}/users/whoAmI */
+/** GET /{VERSION}/users/info */
 export const getUserInfo: RouterMiddleware<string> = (ctx) => {
   ctx.response.body = createResponse({ data: ctx.state.userInfo });
 };

@@ -1,4 +1,4 @@
-import { helpers, RouterMiddleware, shared } from "../../deps.ts";
+import { helpers, RouterMiddleware } from "../../deps.ts";
 
 import { createResponse, getIncrementId } from "../lib/mod.ts";
 import { getStorage } from "../service/storage/mod.ts";
@@ -6,7 +6,6 @@ import { getStorage } from "../service/storage/mod.ts";
 const pagesStorage = getStorage({ tableName: "Pages" })!;
 const configStorage = getStorage({ tableName: "Config" })!;
 
-// TODO(@so1ve): 携带有合法JWT Token且query: draft=true时，返回内容包括草稿箱的文章
 /**
  * GET /{VERSION}/pages
  * Query: pageSize, page
@@ -26,7 +25,7 @@ export const getPages: RouterMiddleware<string> = async (ctx) => {
     : maxPageSize;
   const page = Number(_paramPage); // 当前页数
   const pages = await pagesStorage.select(
-    { hidden: ["!=", true] },
+    { hidden: false }, // TODO(@so1ve): 当用户有合法JWT Token时，可以返回隐藏的文章(Query: ?draft)
     {
       desc: "id", // 避免与Leancloud的字段冲突
       limit: pageSize,
@@ -35,6 +34,7 @@ export const getPages: RouterMiddleware<string> = async (ctx) => {
         "id",
         "title",
         "content",
+        "metas",
       ],
     },
   );
@@ -52,6 +52,7 @@ export const getPage: RouterMiddleware<string> = async (ctx) => {
         "id",
         "title",
         "content",
+        "metas",
       ],
     },
   ))[0]; // Select返回的是一个列表，预期只会有一个返回数据

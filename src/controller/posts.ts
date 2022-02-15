@@ -7,7 +7,6 @@ const postsStorage = getStorage({ tableName: "Posts" })!;
 const configStorage = getStorage({ tableName: "Config" })!;
 
 // TODO(@so1ve): 携带有合法JWT Token且query: draft=true时，返回内容包括草稿箱的文章
-// TODO(@so1ve): 增加hidden属性
 /**
  * GET /{VERSION}/posts
  * Query: pageSize, page, desc
@@ -28,7 +27,10 @@ export const getPosts: RouterMiddleware<string> = async (ctx) => {
     : maxPageSize;
   const page = Number(_paramPage); // 当前页数
   const posts = await postsStorage.select(
-    { status: ["NOT IN", ["draft"]] },
+    {
+      status: ["NOT IN", ["draft"]],
+      hidden: false, // TODO(@so1ve): 当用户有合法JWT Token时，可以返回隐藏的文章(Query: ?draft)
+    },
     {
       desc, // 避免与Leancloud的字段冲突
       limit: pageSize,
@@ -43,7 +45,7 @@ export const getPosts: RouterMiddleware<string> = async (ctx) => {
         "authors",
         "tags",
         "categories",
-        "postMetas",
+        "metas",
         "created",
         "updated",
       ],
@@ -70,7 +72,7 @@ export const getPost: RouterMiddleware<string> = async (ctx) => {
         "authors",
         "tags",
         "categories",
-        "postMetas",
+        "metas",
         "created",
         "updated",
       ],
@@ -102,8 +104,9 @@ export const createPost: RouterMiddleware<string> = async (ctx) => {
     tags = [],
     categories = [],
     sticky = false,
+    hidden = false,
     status = "published",
-    postMetas = {},
+    metas = {},
     created = new Date().toISOString(),
     updated = new Date().toISOString(),
   } = requestBody;
@@ -120,8 +123,9 @@ export const createPost: RouterMiddleware<string> = async (ctx) => {
     tags,
     categories,
     sticky,
+    hidden,
     status,
-    postMetas,
+    metas,
     created,
     updated,
   });

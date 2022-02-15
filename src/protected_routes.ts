@@ -17,58 +17,58 @@ const protectedRouter = new Router({ prefix: `/${API_VERSION}` });
 
 protectedRouter.use(jwt);
 
-// Create post route
+// Create post
 protectedRouter.post(`/posts`, posts.createPost);
 
-// Update post route
+// Update post
 protectedRouter.put(`/posts/:id`, posts.updatePost);
 
-// Delete post route
+// Delete post
 protectedRouter.delete(`/posts/:id`, posts.deletePost);
 
-// Create tag route
+// Create tag
 protectedRouter.post(`/tags`, tags.createTag);
 
-// Update tag route
+// Update tag
 protectedRouter.put(`/tags/:id`, tags.updateTag);
 
-// Delete tag route
+// Delete tag
 protectedRouter.delete(`/tags/:id`, tags.deleteTag);
 
-// Create category route
+// Create category
 protectedRouter.post(`/categories`, categories.createCategory);
 
-// Update category route
+// Update category
 protectedRouter.put(`/categories/:id`, categories.updateCategory);
 
-// Delete category route
+// Delete category
 protectedRouter.delete(`/categories/:id`, categories.deleteCategory);
 
-// Create author route
+// Create author
 protectedRouter.post(`/authors`, authors.createAuthor);
 
-// Update author route
+// Update author
 protectedRouter.put(`/authors/:id`, authors.updateAuthor);
 
-// Delete author route
+// Delete author
 protectedRouter.delete(`/authors/:id`, authors.deleteAuthor);
 
-// Create page route
+// Create page
 protectedRouter.post(`/pages`, pages.createPage);
 
-// Update page route
+// Update page
 protectedRouter.put(`/pages/:id`, pages.updatePage);
 
-// Delete page route
+// Delete page
 protectedRouter.delete(`/pages/:id`, pages.deletePage);
 
-// Update config route
+// Update config
 protectedRouter.put(`/config/:name`, config.updateConfig);
 
-// Update user route
+// Update user
 protectedRouter.put(`/user`, users.updateUser);
 
-// Init route
+// Init
 protectedRouter.post(`/init`, init.init);
 
 export { protectedRouter };
