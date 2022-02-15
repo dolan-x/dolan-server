@@ -185,6 +185,30 @@ class LeancloudStorage extends BaseStorage {
     ]) as U;
   }
 
+  async addAll<T extends unknown[], U = unknown>(
+    data: T,
+    access: Access = { read: true, write: true },
+  ): Promise<U> {
+    const Table = AV.Object.extend(this.tableName);
+    const objects = data.map((_data) => {
+      const instance = new Table();
+      instance.set(_data as Record<string, unknown>);
+      const acl = new AV.ACL();
+      acl.setPublicReadAccess(access.read);
+      acl.setPublicWriteAccess(access.write);
+      instance.setACL(acl);
+      return instance;
+    });
+    const resp = await AV.Object.saveAll(objects);
+    return (resp as unknown as AV.Object[]).map((item) =>
+      omit(item.toJSON(), [
+        "createdAt",
+        "updatedAt",
+        "objectId",
+      ])
+    ) as unknown as U;
+  }
+
   /**
    * Update some data
    * @param {T} data Something to update with

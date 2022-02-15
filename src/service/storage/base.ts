@@ -19,9 +19,13 @@ export type Access = {
  */
 export default abstract class BaseStorage {
   constructor(public tableName: string) {}
-  abstract select<T = any>(where: Where, options?: SelectOptions): Promise<T>;
-  abstract count(where: Where, options?: any): Promise<number>;
+  abstract select<T = any>(where?: Where, options?: SelectOptions): Promise<T>;
+  abstract count(where?: Where, options?: any): Promise<number>;
   abstract add<T, U = any>(
+    data: T,
+    access?: Access,
+  ): Promise<U>;
+  abstract addAll<T extends unknown[], U = any>(
     data: T,
     access?: Access,
   ): Promise<U>;
