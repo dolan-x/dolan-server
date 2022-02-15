@@ -7,6 +7,7 @@ import {
   config,
   pages,
   posts,
+  sitemap,
   tags,
   users,
 } from "./controller/mod.ts";
@@ -16,55 +17,58 @@ const unprotectedRouter = new Router({ prefix: `/${API_VERSION}` });
 
 unprotectedRouter.use(getUserInfo);
 
-// Post list route
+// Post list
 unprotectedRouter.get(`/posts`, posts.getPosts);
 
-// Post detail route
+// Post detail
 unprotectedRouter.get(`/posts/:id`, posts.getPost);
 
-// Tags route
+// Tags
 unprotectedRouter.get("/tags", tags.getTags);
 
-// Tag count route
+// Tag count
 unprotectedRouter.get("/tags/:id/count", tags.getTagCount);
 
-// Tag detail route
+// Tag detail
 unprotectedRouter.get("/tags/:id", tags.getTag);
 
-// Categories route
+// Categories
 unprotectedRouter.get("/categories", categories.getCategories);
 
-// Category count route
+// Category count
 unprotectedRouter.get("/categories/:id/count", categories.getCategoryCount);
 
-// Category detail route
+// Category detail
 unprotectedRouter.get("/categories/:id", categories.getCategory);
 
-// Authors route
+// Authors
 unprotectedRouter.get("/authors", authors.getAuthors);
 
-// Author posts route
+// Author posts
 unprotectedRouter.get("/authors/:id/posts", authors.getAuthorPosts);
 
-// Author detail route
+// Author detail
 unprotectedRouter.get("/authors/:id", authors.getAuthor);
 
-// Page list route
+// Page list
 unprotectedRouter.get(`/pages`, pages.getPages);
 
-// Post detail route
+// Post detail
 unprotectedRouter.get(`/pages/:id`, pages.getPage);
 
-// Config detail route
+// Config detail
 unprotectedRouter.get("/config/:name", config.getConfig);
 
-// User Info route
-unprotectedRouter.get("/users/whoAmI", users.getUserInfo);
+// User Info
+unprotectedRouter.get("/users/info", users.getUserInfo);
 
-// Login route
+// Login
 unprotectedRouter.post("/users/login", users.loginUser);
 
-// Register route
+// Register
 unprotectedRouter.post("/users/signup", users.signupUser);
+
+// Sitemap
+unprotectedRouter.get("/sitemap", sitemap.generateSitemap);
 
 export { unprotectedRouter };

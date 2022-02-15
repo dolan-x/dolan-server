@@ -6,3 +6,4 @@ export * as pages from "./pages.ts";
 export * as config from "./config.ts";
 export * as users from "./users.ts";
 export * as init from "./init.ts";
+export * as sitemap from "./sitemap.ts";
