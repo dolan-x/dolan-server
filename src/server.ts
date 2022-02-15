@@ -3,7 +3,7 @@ import "https://deno.land/x/xhr@0.1.2/mod.ts"; // XMLHttpRequest的Polyfill
 import { Application, colors, parse } from "../deps.ts";
 import { unprotectedRouter } from "./unprotected_routes.ts";
 import { protectedRouter } from "./protected_routes.ts";
-import { errorHandler, setContentType } from "./middleware/mod.ts";
+import { errorHandler } from "./middleware/mod.ts";
 import { User } from "./types/mod.ts";
 
 const parsedArgs = parse(Deno.args);
@@ -19,7 +19,6 @@ app.use(unprotectedRouter.routes())
   .use(unprotectedRouter.allowedMethods({ throw: true }));
 app.use(protectedRouter.routes())
   .use(protectedRouter.allowedMethods({ throw: true }));
-app.use(setContentType);
 
 app.listen({ port: PORT });
 console.log(
