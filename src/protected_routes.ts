@@ -1,6 +1,5 @@
 import { Router } from "../deps.ts";
 
-import { API_VERSION } from "./lib/mod.ts";
 import {
   authors,
   categories,
@@ -13,7 +12,7 @@ import {
 } from "./controller/mod.ts";
 import { jwt } from "./middleware/mod.ts";
 
-const protectedRouter = new Router({ prefix: `/${API_VERSION}` });
+const protectedRouter = new Router();
 
 protectedRouter.use(jwt);
 

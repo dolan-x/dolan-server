@@ -3,7 +3,7 @@ import { RouterMiddleware } from "../../deps.ts";
 import { CLOUD_CONFIG_NAMES, createResponse } from "../lib/mod.ts";
 import { getStorage } from "../service/storage/mod.ts";
 
-const storage = getStorage({ tableName: "Config" })!;
+const storage = await getStorage("Config");
 
 /** GET /{VERSION}/config/{name} */
 export const getConfig: RouterMiddleware<string> = async (ctx) => {

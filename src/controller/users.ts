@@ -4,7 +4,7 @@ import { createResponse, jwtKey } from "../lib/mod.ts";
 import { getStorage } from "../service/storage/mod.ts";
 import { User } from "../types/mod.ts";
 
-const storage = getStorage({ tableName: "Users" })!;
+const storage = await getStorage("Users");
 
 /** POST /{VERSION}/users/signup */
 export const signupUser: RouterMiddleware<string> = async (ctx) => {

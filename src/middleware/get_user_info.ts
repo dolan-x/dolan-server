@@ -3,7 +3,7 @@ import { RouterMiddleware, verifyJwt } from "../../deps.ts";
 import { jwtKey } from "../lib/mod.ts";
 import { getStorage } from "../service/storage/mod.ts";
 
-const storage = getStorage({ tableName: "Users" })!;
+const storage = await getStorage("Users");
 
 export const getUserInfo: RouterMiddleware<string> = async (ctx, next) => {
   const authHeader = ctx.request.headers.get("Authorization")!;

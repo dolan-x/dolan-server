@@ -3,8 +3,8 @@ import { helpers, RouterMiddleware, shared } from "../../deps.ts";
 import { createResponse, getIncrementId } from "../lib/mod.ts";
 import { getStorage } from "../service/storage/mod.ts";
 
-const postsStorage = getStorage({ tableName: "Posts" })!;
-const configStorage = getStorage({ tableName: "Config" })!;
+const postsStorage = await getStorage("Posts");
+const configStorage = await getStorage("Config");
 
 // TODO(@so1ve): 携带有合法JWT Token且query: draft=true时，返回内容包括草稿箱的文章
 /**

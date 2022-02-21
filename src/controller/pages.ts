@@ -3,8 +3,8 @@ import { helpers, RouterMiddleware } from "../../deps.ts";
 import { createResponse, getIncrementId } from "../lib/mod.ts";
 import { getStorage } from "../service/storage/mod.ts";
 
-const pagesStorage = getStorage({ tableName: "Pages" })!;
-const configStorage = getStorage({ tableName: "Config" })!;
+const pagesStorage = await getStorage("Pages");
+const configStorage = await getStorage("Config");
 
 /**
  * GET /{VERSION}/pages

@@ -10,13 +10,15 @@ type Config = {
   leanAppKey?: string;
   leanMasterKey?: string;
   leanServer?: string;
+  detaProjectKey?: string;
 };
 const config: Config = {
   storageType: Deno.env.get("STORAGE_TYPE") as SupportedStorage, // SupportedStorage
   leanAppId: Deno.env.get("LEAN_APP_ID"),
   leanAppKey: Deno.env.get("LEAN_APP_KEY"),
   leanMasterKey: Deno.env.get("LEAN_MASTER_KEY"),
-  // leanServer: Deno.env.get("LEAN_SERVER"),
+  leanServer: Deno.env.get("LEAN_SERVER"),
+  detaProjectKey: Deno.env.get("DETA_PROJECT_KEY"),
 };
 
 export { config };

@@ -3,9 +3,9 @@ import { helpers, RouterMiddleware, shared } from "../../deps.ts";
 import { createResponse, getIncrementId } from "../lib/mod.ts";
 import { getStorage } from "../service/storage/mod.ts";
 
-const authorsStorage = getStorage({ tableName: "Authors" })!;
-const postsStorage = getStorage({ tableName: "Posts" })!;
-const configStorage = getStorage({ tableName: "Config" })!;
+const authorsStorage = await getStorage("Authors");
+const postsStorage = await getStorage("Posts");
+const configStorage = await getStorage("Config");
 
 /** GET /{VERSION}/authors */
 export const getAuthors: RouterMiddleware<string> = async (ctx) => {

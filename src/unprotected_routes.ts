@@ -1,6 +1,5 @@
 import { Router } from "../deps.ts";
 
-import { API_VERSION } from "./lib/mod.ts";
 import {
   authors,
   categories,
@@ -13,7 +12,7 @@ import {
 } from "./controller/mod.ts";
 import { getUserInfo } from "./middleware/mod.ts";
 
-const unprotectedRouter = new Router({ prefix: `/${API_VERSION}` });
+const unprotectedRouter = new Router();
 
 unprotectedRouter.use(getUserInfo);
 
