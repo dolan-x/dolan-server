@@ -6,3 +6,5 @@ export type User = {
   password: string;
   type: "admin" | "guest";
 };
+
+export type Config = Record<string, unknown>;

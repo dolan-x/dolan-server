@@ -1,26 +1,20 @@
-import { helpers, RouterMiddleware, shared } from "../../deps.ts";
+import { RouterMiddleware, shared } from "../../deps.ts";
 
 import { createSitemapUrls } from "../lib/sitemap.ts";
+import { Config } from "../types/mod.ts";
 import { getStorage } from "../service/storage/mod.ts";
 
 const postsStorage = getStorage({ tableName: "Posts" })!;
 const tagsStorage = getStorage({ tableName: "Tags" })!;
 const categoriesStorage = getStorage({ tableName: "Categories" })!;
+const configStorage = getStorage({ tableName: "Config" })!;
 
 /**
  * GET /{VERSION}/sitemap
  * Query: postsBaseUrl, tagsBaseUrl, categoriesBaseUrl
  */
 export const generateSitemap: RouterMiddleware<string> = async (ctx) => {
-  const {
-    postsBaseUrl = "",
-    tagsBaseUrl = "",
-    categoriesBaseUrl = "",
-  } = helpers.getQuery(
-    ctx,
-    { mergeParams: true },
-  );
-  const [posts, tags, categories] = await Promise.all([
+  const [posts, tags, categories, config] = await Promise.all([
     postsStorage.select(
       { status: ["NOT IN", ["draft"]] },
       {
@@ -39,7 +33,12 @@ export const generateSitemap: RouterMiddleware<string> = async (ctx) => {
         fields: ["id"],
       },
     ) as Promise<shared.Category[]>,
+    configStorage.select(
+      { name: "functions" },
+    ),
   ]);
+  const { postsBaseUrl, tagsBaseUrl, categoriesBaseUrl } = config.sitemap;
+  // deno-fmt-ignore
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 ${createSitemapUrls(posts, postsBaseUrl)}${createSitemapUrls(tags, tagsBaseUrl)}${createSitemapUrls(categories, categoriesBaseUrl)}

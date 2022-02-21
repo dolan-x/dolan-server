@@ -20,11 +20,12 @@ export const init: RouterMiddleware<string> = async (ctx) => {
     created: new Date().toISOString(),
     updated: new Date().toISOString(),
     status: "published",
+    hidden: false,
     sticky: false,
     authors: [],
     categories: [],
     tags: [],
-    postMetas: {},
+    metas: {},
   });
   await configStorage.addAll([
     {
@@ -34,6 +35,10 @@ export const init: RouterMiddleware<string> = async (ctx) => {
     {
       name: "posts",
       value: initValues.posts,
+    },
+    {
+      name: "pages",
+      value: initValues.pages,
     },
     {
       name: "categories",
@@ -54,6 +59,10 @@ export const init: RouterMiddleware<string> = async (ctx) => {
     {
       name: "userInjections",
       value: initValues.userInjections,
+    },
+    {
+      name: "functions",
+      value: initValues.functions,
     },
   ]);
 

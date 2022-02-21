@@ -1,13 +1,14 @@
-import { jsonErrorMiddleware, Middleware, status } from "../../deps.ts";
+import { jsonErrorMiddleware, Middleware, STATUS_TEXT } from "../../deps.ts";
 
 import { createResponse } from "../lib/mod.ts";
 
-const errorHandler = jsonErrorMiddleware<Middleware>({
-  format(err: Error & { status?: number }) {
+const errorHandler: Middleware = jsonErrorMiddleware<Middleware>({
+  // @ts-ignore .
+  format: (err: Error & { status: number }) => {
     return createResponse({
       code: err.status,
-      error: status((err.status as number) || 500).toString(),
-      message: err.message,
+      message: STATUS_TEXT.get(err.status),
+      error: STATUS_TEXT.get(err.status),
     });
   },
 });

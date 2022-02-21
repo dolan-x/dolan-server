@@ -1,0 +1,7 @@
+{
+  "sitemap": {
+    "postsBaseUrl": "https://example.com/posts",
+    "categoriesBaseUrl": "https://example.com/categories",
+    "tagsBaseUrl": "https://example.com/tags"
+  }
+}
