@@ -3,8 +3,9 @@ export const CLOUD_CONFIG_NAMES = [
   "posts",
   "categories",
   "tags",
-  "authors",
+  "pages",
   "authors",
   "userInjections",
+  "functions",
   "custom",
 ];

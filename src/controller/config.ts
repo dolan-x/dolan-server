@@ -3,7 +3,7 @@ import { RouterMiddleware } from "../../deps.ts";
 import { CLOUD_CONFIG_NAMES, createResponse } from "../lib/mod.ts";
 import { getStorage } from "../service/storage/mod.ts";
 
-const storage = await getStorage("Config");
+const storage = getStorage("Config");
 
 /** GET /{VERSION}/config/{name} */
 export const getConfig: RouterMiddleware<string> = async (ctx) => {
@@ -21,7 +21,7 @@ export const getConfig: RouterMiddleware<string> = async (ctx) => {
     ctx.throw(404, `Config(Name: ${name}) does not exist`);
     return;
   }
-  ctx.response.body = createResponse({ data: config });
+  ctx.response.body = createResponse({ data: config.value });
 };
 
 // 没有新建的操作，新建应当在初始化时完成
@@ -40,7 +40,7 @@ export const updateConfig: RouterMiddleware<string> = async (ctx) => {
     requestBody = {};
   }
   const result = await storage.update(
-    { requestBody },
+    { name, value: requestBody },
     { name },
   );
   ctx.response.body = createResponse({ data: result });

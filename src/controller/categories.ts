@@ -4,9 +4,9 @@ import { helpers, RouterMiddleware, shared } from "../../deps.ts";
 import { createResponse, getIncrementId } from "../lib/mod.ts";
 import { getStorage } from "../service/storage/mod.ts";
 
-const categoriesStorage = await getStorage("Categories");
-const postsStorage = await getStorage("Posts");
-const configStorage = await getStorage("Config");
+const categoriesStorage = getStorage("Categories");
+const postsStorage = getStorage("Posts");
+const configStorage = getStorage("Config");
 
 /** GET /{VERSION}/categories */
 export const getCategories: RouterMiddleware<string> = async (ctx) => {
@@ -57,7 +57,10 @@ export const getCategory: RouterMiddleware<string> = async (ctx) => {
     },
   ))[0]; // Select返回的是一个列表，预期只会有一个返回数据
   if (!category) {
-    ctx.throw(404, `Category(ID: ${id}) does not exist`);
+    ctx.throw(
+      shared.statusCodes[shared.Codes.CategoryDoesNotExist],
+      shared.messages[shared.Codes.CategoryDoesNotExist],
+    );
     return;
   }
   ctx.response.body = createResponse({ data: category });

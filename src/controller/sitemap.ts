@@ -4,10 +4,10 @@ import { createSitemapUrls } from "../lib/sitemap.ts";
 import { Config } from "../types/mod.ts";
 import { getStorage } from "../service/storage/mod.ts";
 
-const postsStorage = await getStorage("Posts");
-const tagsStorage = await getStorage("Tags");
-const categoriesStorage = await getStorage("Categories");
-const configStorage = await getStorage("Config");
+const postsStorage = getStorage("Posts");
+const tagsStorage = getStorage("Tags");
+const categoriesStorage = getStorage("Categories");
+const configStorage = getStorage("Config");
 
 /**
  * GET /{VERSION}/sitemap

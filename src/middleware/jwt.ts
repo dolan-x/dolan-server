@@ -9,5 +9,6 @@ const onSuccess: OnSuccessHandler = (ctx, jwtPayload) => {
   ctx.state.userInfo = jwtPayload;
 };
 
+// @ts-ignore: .
 const jwt = jwtMiddleware<RouterMiddleware<string>>({ key: jwtKey, onSuccess });
 export { jwt };

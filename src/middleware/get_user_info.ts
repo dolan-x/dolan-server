@@ -1,9 +1,6 @@
 import { RouterMiddleware, verifyJwt } from "../../deps.ts";
 
 import { jwtKey } from "../lib/mod.ts";
-import { getStorage } from "../service/storage/mod.ts";
-
-const storage = await getStorage("Users");
 
 export const getUserInfo: RouterMiddleware<string> = async (ctx, next) => {
   const authHeader = ctx.request.headers.get("Authorization")!;
@@ -15,8 +12,7 @@ export const getUserInfo: RouterMiddleware<string> = async (ctx, next) => {
   try {
     const token = authHeader.replace("Bearer ", "");
     const payload = await verifyJwt(token, jwtKey);
-    const user = (await storage.select({ username: payload.username }))[0];
-    ctx.state.userInfo = user;
+    ctx.state.userInfo = payload;
   } catch {}
   await next();
 };

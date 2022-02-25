@@ -26,3 +26,5 @@ console.log(
     colors.blue(`http://localhost:${PORT}`)
   }`,
 );
+
+export default app;

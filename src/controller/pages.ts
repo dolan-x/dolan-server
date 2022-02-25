@@ -3,8 +3,8 @@ import { helpers, RouterMiddleware } from "../../deps.ts";
 import { createResponse, getIncrementId } from "../lib/mod.ts";
 import { getStorage } from "../service/storage/mod.ts";
 
-const pagesStorage = await getStorage("Pages");
-const configStorage = await getStorage("Config");
+const pagesStorage = getStorage("Pages");
+const configStorage = getStorage("Config");
 
 /**
  * GET /{VERSION}/pages
@@ -24,8 +24,12 @@ export const getPages: RouterMiddleware<string> = async (ctx) => {
     ? (paramPageSize >= maxPageSize ? maxPageSize : paramPageSize)
     : maxPageSize;
   const page = Number(_paramPage); // 当前页数
+  const where: Record<string, any> = {};
+  if (!ctx.state.userInfo) {
+    where.hidden = false;
+  }
   const pages = await pagesStorage.select(
-    { hidden: false }, // TODO(@so1ve): 当用户有合法JWT Token时，可以返回隐藏的文章(Query: ?draft)
+    where, // TODO(@so1ve): 当用户有合法JWT Token时，可以返回隐藏的文章(Query: ?draft)
     {
       desc: "id", // 避免与Leancloud的字段冲突
       limit: pageSize,

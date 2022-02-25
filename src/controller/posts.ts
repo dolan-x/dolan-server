@@ -3,8 +3,8 @@ import { helpers, RouterMiddleware, shared } from "../../deps.ts";
 import { createResponse, getIncrementId } from "../lib/mod.ts";
 import { getStorage } from "../service/storage/mod.ts";
 
-const postsStorage = await getStorage("Posts");
-const configStorage = await getStorage("Config");
+const postsStorage = getStorage("Posts");
+const configStorage = getStorage("Config");
 
 // TODO(@so1ve): 携带有合法JWT Token且query: draft=true时，返回内容包括草稿箱的文章
 /**
@@ -26,11 +26,13 @@ export const getPosts: RouterMiddleware<string> = async (ctx) => {
     ? (paramPageSize >= maxPageSize ? maxPageSize : paramPageSize)
     : maxPageSize;
   const page = Number(_paramPage); // 当前页数
+  const where: Record<string, any> = {};
+  if (!ctx.state.userInfo) {
+    where.status = ["NOT IN", ["draft"]];
+    where.hidden = false;
+  }
   const posts = await postsStorage.select(
-    {
-      status: ["NOT IN", ["draft"]],
-      hidden: false, // TODO(@so1ve): 当用户有合法JWT Token时，可以返回隐藏的文章(Query: ?draft)
-    },
+    where,
     {
       desc, // 避免与Leancloud的字段冲突
       limit: pageSize,

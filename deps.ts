@@ -17,14 +17,14 @@ export {
   Router,
   Status,
   STATUS_TEXT,
-} from "https://deno.land/x/oak@v10.2.0/mod.ts";
+} from "https://deno.land/x/oak@v10.4.0/mod.ts";
 export type {
   Context,
   Middleware,
   RouterMiddleware,
-} from "https://deno.land/x/oak@v10.2.0/mod.ts";
+} from "https://deno.land/x/oak@v10.4.0/mod.ts";
 // Oak JWT
-export { jwtMiddleware } from "https://denopkg.com/so1ve/oak-middleware-jwt@6854a2b/mod.ts";
+export { jwtMiddleware } from "https://denopkg.com/halvardssm/oak-middleware-jwt@master/mod.ts";
 export type { OnSuccessHandler } from "https://denopkg.com/so1ve/oak-middleware-jwt@6854a2b/mod.ts";
 // Oak json error
 export { jsonErrorMiddleware } from "https://denopkg.com/so1ve/oak-json-error@main/mod.ts";
