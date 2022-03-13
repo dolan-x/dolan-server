@@ -20,40 +20,40 @@ unprotectedRouter.use(getUserInfo);
 unprotectedRouter.get(`/posts`, posts.getPosts);
 
 // Post detail
-unprotectedRouter.get(`/posts/:id`, posts.getPost);
+unprotectedRouter.get(`/posts/:slug`, posts.getPost);
 
 // Tags
 unprotectedRouter.get("/tags", tags.getTags);
 
 // Tag count
-unprotectedRouter.get("/tags/:id/count", tags.getTagCount);
+unprotectedRouter.get("/tags/:slug/count", tags.getTagCount);
 
 // Tag detail
-unprotectedRouter.get("/tags/:id", tags.getTag);
+unprotectedRouter.get("/tags/:slug", tags.getTag);
 
 // Categories
 unprotectedRouter.get("/categories", categories.getCategories);
 
 // Category count
-unprotectedRouter.get("/categories/:id/count", categories.getCategoryCount);
+unprotectedRouter.get("/categories/:slug/count", categories.getCategoryCount);
 
 // Category detail
-unprotectedRouter.get("/categories/:id", categories.getCategory);
+unprotectedRouter.get("/categories/:slug", categories.getCategory);
 
 // Authors
 unprotectedRouter.get("/authors", authors.getAuthors);
 
 // Author posts
-unprotectedRouter.get("/authors/:id/posts", authors.getAuthorPosts);
+unprotectedRouter.get("/authors/:slug/posts", authors.getAuthorPosts);
 
 // Author detail
-unprotectedRouter.get("/authors/:id", authors.getAuthor);
+unprotectedRouter.get("/authors/:slug", authors.getAuthor);
 
 // Page list
 unprotectedRouter.get(`/pages`, pages.getPages);
 
 // Post detail
-unprotectedRouter.get(`/pages/:id`, pages.getPage);
+unprotectedRouter.get(`/pages/:slug`, pages.getPage);
 
 // Config detail
 unprotectedRouter.get("/config/:name", config.getConfig);

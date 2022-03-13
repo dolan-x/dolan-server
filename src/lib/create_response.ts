@@ -14,16 +14,15 @@ type CreateResponseResult = {
 };
 
 export function createResponse({
-  code = shared.Codes.Success,
-  message = shared.messages[code],
+  code = shared.STATUS_CODES.get(shared.Codes.Success),
+  message = shared.STATUS_MESSAGES.get(shared.Codes.Success),
   data = {},
   error,
 }: CreateResponseArguments = {}): CreateResponseResult {
   const response: CreateResponseResult = {
     code,
     message,
-  };
-  console.log(error);
+  } as CreateResponseResult;
   !error && (response.data = data);
   error && (response.error = error);
 

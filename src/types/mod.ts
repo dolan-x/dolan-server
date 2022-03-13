@@ -1,4 +1,3 @@
-export type SupportedStorage = "leancloud";
 export type User = {
   username: string;
   displayName: string;

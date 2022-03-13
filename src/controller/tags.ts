@@ -1,7 +1,6 @@
-import { helpers, RouterMiddleware, shared } from "../../deps.ts";
+import { helpers, RouterMiddleware, shared, Status } from "../../deps.ts";
 
-import { createResponse, getIncrementId } from "../lib/mod.ts";
-import { getStorage } from "../service/storage/mod.ts";
+import { createResponse, getStorage, validateRequestBody } from "../lib/mod.ts";
 
 const tagsStorage = getStorage("Tags");
 const postsStorage = getStorage("Posts");
@@ -17,7 +16,8 @@ export const getTags: RouterMiddleware<string> = async (ctx) => {
     { mergeParams: true },
   );
   const paramPageSize = Number(_paramPageSize); // 每页标签数
-  const { maxPageSize = 10 } = await configStorage.select({ name: "tags" }); // 最大每页标签数
+  const { maxPageSize = 10 } =
+    (await configStorage.select({ name: "tags" }))[0]; // 最大每页标签数
   const pageSize = paramPageSize // 最终每页标签数
     ? (paramPageSize >= maxPageSize ? maxPageSize : paramPageSize)
     : maxPageSize;
@@ -29,7 +29,7 @@ export const getTags: RouterMiddleware<string> = async (ctx) => {
       limit: pageSize,
       offset: Math.max((page - 1) * pageSize, 0),
       fields: [
-        "id",
+        "slug",
         "name",
         "description",
       ],
@@ -38,32 +38,30 @@ export const getTags: RouterMiddleware<string> = async (ctx) => {
   ctx.response.body = createResponse({ data: tags });
 };
 
-/** GET /{VERSION}/tags/{id} */
+/** GET /{VERSION}/tags/{slug} */
 export const getTag: RouterMiddleware<string> = async (ctx) => {
-  const { id: _id } = ctx.params;
-  const id = Number(_id);
+  const { slug } = ctx.params;
   const tag = (await tagsStorage.select(
-    { id },
+    { slug },
     {
       desc: "updated",
       fields: [
-        "id",
+        "slug",
         "name",
         "description",
       ],
     },
   ))[0]; // Select返回的是一个列表，预期只会有一个返回数据
   if (!tag) {
-    ctx.throw(404, `Tag(ID: ${id}) does not exist`);
+    ctx.throw(Status.NotFound, `Tag(Slug: ${slug}) does not exist`);
     return;
   }
   ctx.response.body = createResponse({ data: tag });
 };
 
-/** GET /{VERSION}/tags/{id}/count */
+/** GET /{VERSION}/tags/{slug}/count */
 export const getTagCount: RouterMiddleware<string> = async (ctx) => {
-  const { id: _id } = ctx.params;
-  const id = Number(_id);
+  const { slug } = ctx.params;
   const allPosts: readonly shared.Post[] = Object.freeze( // TODO(@so1ve): 有没有高效点的实现啊喂！！
     await postsStorage.select(
       {},
@@ -74,37 +72,34 @@ export const getTagCount: RouterMiddleware<string> = async (ctx) => {
       },
     ),
   );
-  const postsIncludeThisTag = allPosts.filter((post) => post.tags.includes(id));
+  const postsIncludeThisTag = allPosts.filter((post) =>
+    post.tags.includes(slug)
+  );
   ctx.response.body = createResponse({ data: postsIncludeThisTag.length });
 };
 
 /** POST /{VERSION}/tags */
-// Tag会做重名检查，`name`不能重复
+// Tag会做重名检查，`name` `slug` 不能重复
 export const createTag: RouterMiddleware<string> = async (ctx) => {
-  let requestBody;
-  try {
-    requestBody = await ctx.request.body({ type: "json" }).value;
-  } catch {
-    requestBody = {};
-  }
+  const requestBody = await validateRequestBody(ctx);
   const { // 默认值
     name = "",
+    slug = name,
     description = "",
   } = requestBody;
-  const duplicate = await tagsStorage.select({ name });
+  const duplicate = await tagsStorage.select({
+    _complex: {
+      name,
+      slug,
+      _logic: "or",
+    },
+  });
   if (duplicate.length) {
-    ctx.throw(409, `Tag(Name: ${name}) already exists`);
+    ctx.throw(Status.Conflict, `Tag(Name: ${name}) already exists`);
     return;
   }
-  const tags: shared.Tag[] = await tagsStorage.select(
-    {},
-    {
-      fields: ["id"],
-    },
-  );
-  const currentId = getIncrementId(tags);
   const resp = await tagsStorage.add({
-    id: currentId,
+    slug,
     name,
     description,
   });
@@ -113,40 +108,33 @@ export const createTag: RouterMiddleware<string> = async (ctx) => {
   });
 };
 
-/** PUT /{VERSION}/tags/{id} */
+/** PUT /{VERSION}/tags/{slug} */
 export const updateTag: RouterMiddleware<string> = async (ctx) => {
-  const { id: _id } = ctx.params;
-  const id = Number(_id);
-  const exists = (await tagsStorage.select({ id }))[0];
+  const { slug } = ctx.params;
+  const exists = (await tagsStorage.select({ slug }))[0];
   if (!exists) {
-    ctx.throw(404, `Tag (ID: ${id}) does not exist`);
+    ctx.throw(Status.NotFound, `Tag (Slug: ${slug}}) does not exist`);
     return;
   }
-  let requestBody;
-  try {
-    requestBody = await ctx.request.body({ type: "json" }).value;
-  } catch {
-    requestBody = {};
-  }
+  const requestBody = await validateRequestBody(ctx);
   const resp = await tagsStorage.update(
     {
       ...requestBody,
-      id,
+      slug,
     },
-    { id },
+    { slug },
   );
   ctx.response.body = createResponse({ data: resp });
 };
 
-/** DELETE /{VERSION}/tags/{id} */
+/** DELETE /{VERSION}/tags/{slug} */
 export const deleteTag: RouterMiddleware<string> = async (ctx) => {
-  const { id: _id } = ctx.params;
-  const id = Number(_id);
-  const exists = (await tagsStorage.select({ id }))[0];
+  const { slug } = ctx.params;
+  const exists = (await tagsStorage.select({ slug }))[0];
   if (!exists) {
-    ctx.throw(404, `Tag (ID: ${id}) does not exist`);
+    ctx.throw(Status.NotFound, `Tag (Slug: ${slug}) does not exist`);
     return;
   }
-  await tagsStorage.delete({ id });
+  await tagsStorage.delete({ slug });
   ctx.response.body = createResponse();
 };

@@ -1,6 +1,6 @@
 // Copyright 2022 the Dolan authors. All rights reserved. MIT license.
 import "https://deno.land/x/xhr@0.1.2/mod.ts"; // XMLHttpRequest的Polyfill
-import { Application, colors, parse } from "../deps.ts";
+import { Application, colors, oakCors, parse } from "../deps.ts";
 import { unprotectedRouter } from "./unprotected_routes.ts";
 import { protectedRouter } from "./protected_routes.ts";
 import { errorHandler } from "./middleware/mod.ts";
@@ -15,6 +15,7 @@ const app = new Application<ApplicationState>();
 const PORT = parsedArgs.p || parsedArgs.port || 4000;
 
 app.use(errorHandler);
+app.use(oakCors());
 app.use(unprotectedRouter.routes())
   .use(unprotectedRouter.allowedMethods({ throw: true }));
 app.use(protectedRouter.routes())

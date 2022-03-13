@@ -1,7 +1,11 @@
-import { RouterMiddleware } from "../../deps.ts";
+import { RouterMiddleware, Status } from "../../deps.ts";
 
-import { CLOUD_CONFIG_NAMES, createResponse } from "../lib/mod.ts";
-import { getStorage } from "../service/storage/mod.ts";
+import {
+  CLOUD_CONFIG_NAMES,
+  createResponse,
+  getStorage,
+  validateRequestBody,
+} from "../lib/mod.ts";
 
 const storage = getStorage("Config");
 
@@ -18,7 +22,7 @@ export const getConfig: RouterMiddleware<string> = async (ctx) => {
     },
   ))[0];
   if (!config) {
-    ctx.throw(404, `Config(Name: ${name}) does not exist`);
+    ctx.throw(Status.NotFound, `Config(Name: ${name}) does not exist`);
     return;
   }
   ctx.response.body = createResponse({ data: config.value });
@@ -30,15 +34,10 @@ export const getConfig: RouterMiddleware<string> = async (ctx) => {
 export const updateConfig: RouterMiddleware<string> = async (ctx) => {
   const { name } = ctx.params;
   if (!CLOUD_CONFIG_NAMES.includes(name)) {
-    ctx.throw(400, `Config(Name: ${name}) is invalid`);
+    ctx.throw(Status.BadRequest, `Config(Name: ${name}) is invalid`);
     return;
   }
-  let requestBody;
-  try {
-    requestBody = await ctx.request.body({ type: "json" }).value;
-  } catch {
-    requestBody = {};
-  }
+  const requestBody = await validateRequestBody(ctx);
   const result = await storage.update(
     { name, value: requestBody },
     { name },

@@ -1,8 +1,6 @@
 import { RouterMiddleware, shared } from "../../deps.ts";
 
-import { createSitemapUrls } from "../lib/sitemap.ts";
-import { Config } from "../types/mod.ts";
-import { getStorage } from "../service/storage/mod.ts";
+import { createSitemapUrls, getStorage } from "../lib/mod.ts";
 
 const postsStorage = getStorage("Posts");
 const tagsStorage = getStorage("Tags");
@@ -16,7 +14,7 @@ const configStorage = getStorage("Config");
 export const generateSitemap: RouterMiddleware<string> = async (ctx) => {
   const [posts, tags, categories, config] = await Promise.all([
     postsStorage.select(
-      { status: ["NOT IN", ["draft"]] },
+      { status: ["!=", "draft"] },
       {
         fields: ["id"],
       },
@@ -37,7 +35,7 @@ export const generateSitemap: RouterMiddleware<string> = async (ctx) => {
       { name: "functions" },
     ),
   ]);
-  const { postsBaseUrl, tagsBaseUrl, categoriesBaseUrl } = config.sitemap;
+  const { postsBaseUrl, tagsBaseUrl, categoriesBaseUrl } = config[0].sitemap;
   // deno-fmt-ignore
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">

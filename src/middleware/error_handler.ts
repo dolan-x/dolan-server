@@ -7,7 +7,7 @@ const errorHandler: Middleware = jsonErrorMiddleware<Middleware>({
   format: (err: Error & { status: number }) => {
     return createResponse({
       code: err.status,
-      message: STATUS_TEXT.get(err.status),
+      message: err.message || STATUS_TEXT.get(err.status),
       error: STATUS_TEXT.get(err.status),
     });
   },

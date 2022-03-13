@@ -20,46 +20,46 @@ protectedRouter.use(jwt);
 protectedRouter.post(`/posts`, posts.createPost);
 
 // Update post
-protectedRouter.put(`/posts/:id`, posts.updatePost);
+protectedRouter.put(`/posts/:slug`, posts.updatePost);
 
 // Delete post
-protectedRouter.delete(`/posts/:id`, posts.deletePost);
+protectedRouter.delete(`/posts/:slug`, posts.deletePost);
 
 // Create tag
 protectedRouter.post(`/tags`, tags.createTag);
 
 // Update tag
-protectedRouter.put(`/tags/:id`, tags.updateTag);
+protectedRouter.put(`/tags/:slug`, tags.updateTag);
 
 // Delete tag
-protectedRouter.delete(`/tags/:id`, tags.deleteTag);
+protectedRouter.delete(`/tags/:slug`, tags.deleteTag);
 
 // Create category
 protectedRouter.post(`/categories`, categories.createCategory);
 
 // Update category
-protectedRouter.put(`/categories/:id`, categories.updateCategory);
+protectedRouter.put(`/categories/:slug`, categories.updateCategory);
 
 // Delete category
-protectedRouter.delete(`/categories/:id`, categories.deleteCategory);
+protectedRouter.delete(`/categories/:slug`, categories.deleteCategory);
 
 // Create author
 protectedRouter.post(`/authors`, authors.createAuthor);
 
 // Update author
-protectedRouter.put(`/authors/:id`, authors.updateAuthor);
+protectedRouter.put(`/authors/:slug`, authors.updateAuthor);
 
 // Delete author
-protectedRouter.delete(`/authors/:id`, authors.deleteAuthor);
+protectedRouter.delete(`/authors/:slug`, authors.deleteAuthor);
 
 // Create page
 protectedRouter.post(`/pages`, pages.createPage);
 
 // Update page
-protectedRouter.put(`/pages/:id`, pages.updatePage);
+protectedRouter.put(`/pages/:slug`, pages.updatePage);
 
 // Delete page
-protectedRouter.delete(`/pages/:id`, pages.deletePage);
+protectedRouter.delete(`/pages/:slug`, pages.deletePage);
 
 // Update config
 protectedRouter.put(`/config/:name`, config.updateConfig);

@@ -1,10 +1,10 @@
-export const createSitemapUrls = <T extends { id: number }>(
+export const createSitemapUrls = <T extends { slug: string }>(
   objs: T[],
   baseUrl: string,
 ) =>
-  objs.map(({ id }) =>
+  objs.map(({ slug }) =>
     `  <url>
-    <loc>${baseUrl}/${id}</loc>
+    <loc>${baseUrl}/${slug}</loc>
   </url>
 `
   ).join("");

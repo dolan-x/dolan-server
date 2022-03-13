@@ -1,7 +1,6 @@
-import { helpers, RouterMiddleware, shared } from "../../deps.ts";
+import { helpers, RouterMiddleware, shared, Status } from "../../deps.ts";
 
-import { createResponse, getIncrementId } from "../lib/mod.ts";
-import { getStorage } from "../service/storage/mod.ts";
+import { createResponse, getStorage, validateRequestBody } from "../lib/mod.ts";
 
 const authorsStorage = getStorage("Authors");
 const postsStorage = getStorage("Posts");
@@ -17,7 +16,8 @@ export const getAuthors: RouterMiddleware<string> = async (ctx) => {
     { mergeParams: true },
   );
   const paramPageSize = Number(_paramPageSize); // 每页作者数
-  const { maxPageSize = 10 } = await configStorage.select({ name: "authors" }); // 最大每页作者数
+  const { maxPageSize = 10 } =
+    (await configStorage.select({ name: "authors" }))[0]; // 最大每页作者数
   const pageSize = paramPageSize // 最终每页作者数
     ? (paramPageSize >= maxPageSize ? maxPageSize : paramPageSize)
     : maxPageSize;
@@ -29,7 +29,7 @@ export const getAuthors: RouterMiddleware<string> = async (ctx) => {
       limit: pageSize,
       offset: Math.max((page - 1) * pageSize, 0),
       fields: [
-        "id",
+        "slug",
         "name",
         "avatar",
         "bio",
@@ -39,16 +39,15 @@ export const getAuthors: RouterMiddleware<string> = async (ctx) => {
   ctx.response.body = createResponse({ data: authors });
 };
 
-/** GET /{VERSION}/authors/{id} */
+/** GET /{VERSION}/authors/{slug} */
 export const getAuthor: RouterMiddleware<string> = async (ctx) => {
-  const { id: _id } = ctx.params;
-  const id = Number(_id);
+  const { slug } = ctx.params;
   const author = (await authorsStorage.select(
-    { id },
+    { slug },
     {
       desc: "updated",
       fields: [
-        "id",
+        "slug",
         "name",
         "avatar",
         "bio",
@@ -56,22 +55,21 @@ export const getAuthor: RouterMiddleware<string> = async (ctx) => {
     },
   ))[0];
   if (!author) {
-    ctx.throw(404, `Author(ID: ${id}) does not exist`);
+    ctx.throw(Status.NotFound, `Author(Slug: ${slug}) does not exist`);
     return;
   }
   ctx.response.body = createResponse({ data: author });
 };
 
-/** GET /{VERSION}/authors/{id}/posts */
+/** GET /{VERSION}/authors/{slug}/posts */
 export const getAuthorPosts: RouterMiddleware<string> = async (ctx) => {
-  const { id: _id } = ctx.params;
-  const id = Number(_id);
+  const { slug } = ctx.params;
   const allPosts: readonly shared.Post[] = Object.freeze( // TODO(@so1ve): 有没有高效点的实现啊喂！！
     await postsStorage.select(
       {},
       {
         fields: [
-          "id",
+          "slug",
           "title",
           "content",
           "excerpt",
@@ -88,33 +86,23 @@ export const getAuthorPosts: RouterMiddleware<string> = async (ctx) => {
     ),
   );
   const postsIncludeThisAuthor = allPosts.filter((post) =>
-    post.authors.includes(id)
+    post.authors.includes(slug)
   );
   ctx.response.body = createResponse({ data: postsIncludeThisAuthor });
 };
 
 /** POST /{VERSION}/authors */
 export const createAuthor: RouterMiddleware<string> = async (ctx) => {
-  let requestBody;
-  try {
-    requestBody = await ctx.request.body({ type: "json" }).value;
-  } catch {
-    requestBody = {};
-  }
-  const authors: shared.Author[] = await authorsStorage.select(
-    {},
-    {
-      fields: ["id"],
-    },
-  );
-  const currentId = getIncrementId(authors);
+  const requestBody = await validateRequestBody(ctx);
+
   const { // 默认值
     name = "",
+    slug = name,
     avatar = "",
     bio = "",
   } = requestBody;
   const resp = await authorsStorage.add({
-    id: currentId,
+    slug,
     name,
     avatar,
     bio,
@@ -124,40 +112,33 @@ export const createAuthor: RouterMiddleware<string> = async (ctx) => {
   });
 };
 
-/** PUT /{VERSION}/authors/{id} */
+/** PUT /{VERSION}/authors/{slug} */
 export const updateAuthor: RouterMiddleware<string> = async (ctx) => {
-  const { id: _id } = ctx.params;
-  const id = Number(_id);
-  const exists = (await authorsStorage.select({ id }))[0];
+  const requestBody = await validateRequestBody(ctx);
+  const { slug } = ctx.params;
+  const exists = (await authorsStorage.select({ slug }))[0];
   if (!exists) {
-    ctx.throw(404, `Author(ID: ${id}) does not exist`);
+    ctx.throw(Status.NotFound, `Author(Slug: ${slug}) does not exist`);
     return;
-  }
-  let requestBody;
-  try {
-    requestBody = await ctx.request.body({ type: "json" }).value;
-  } catch {
-    requestBody = {};
   }
   const resp = await authorsStorage.update(
     {
       ...requestBody,
-      id,
+      slug,
     },
-    { id },
+    { slug },
   );
   ctx.response.body = createResponse({ data: resp });
 };
 
-/** DELETE /{VERSION}/posts/{id} */
+/** DELETE /{VERSION}/posts/{slug} */
 export const deleteAuthor: RouterMiddleware<string> = async (ctx) => {
-  const { id: _id } = ctx.params;
-  const id = Number(_id);
-  const exists = (await authorsStorage.select({ id }))[0];
+  const { slug } = ctx.params;
+  const exists = (await authorsStorage.select({ slug }))[0];
   if (!exists) {
-    ctx.throw(404, `Author(ID: ${id}) does not exist`);
+    ctx.throw(Status.NotFound, `Author(Slug: ${slug}) does not exist`);
     return;
   }
-  await authorsStorage.delete({ id });
+  await authorsStorage.delete({ slug });
   ctx.response.body = createResponse();
 };

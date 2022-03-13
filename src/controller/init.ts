@@ -1,19 +1,18 @@
-import { RouterMiddleware, shared } from "../../deps.ts";
+import { RouterMiddleware, shared, Status } from "../../deps.ts";
 
-import { createResponse, initValues } from "../lib/mod.ts";
-import { getStorage } from "../service/storage/mod.ts";
+import { createResponse, getStorage, initValues } from "../lib/mod.ts";
 
 const postsStorage = getStorage("Posts");
 const configStorage = getStorage("Config");
 
 export const init: RouterMiddleware<string> = async (ctx) => {
   if (await configStorage.count() > 0) {
-    ctx.throw(400, "Already initialized");
+    ctx.throw(Status.BadRequest, "Already initialized");
     return;
   }
 
   await postsStorage.add<shared.Post>({
-    id: 1,
+    slug: "hello-world",
     title: "Hello World",
     content: "# Hello World\nYour first post!",
     excerpt: "Your first post!",
@@ -27,7 +26,7 @@ export const init: RouterMiddleware<string> = async (ctx) => {
     tags: [],
     metas: {},
   });
-  await configStorage.addAll([
+  [
     {
       name: "site",
       value: initValues.site,
@@ -57,14 +56,12 @@ export const init: RouterMiddleware<string> = async (ctx) => {
       value: initValues.custom,
     },
     {
-      name: "userInjections",
-      value: initValues.userInjections,
-    },
-    {
       name: "functions",
       value: initValues.functions,
     },
-  ]);
+  ].forEach(async (i) => {
+    await configStorage.add(i);
+  });
 
   ctx.response.body = createResponse({ data: "Success" });
 };
