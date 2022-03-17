@@ -10,5 +10,8 @@ const onSuccess: OnSuccessHandler = (ctx, jwtPayload) => {
 };
 
 // @ts-ignore: .
-const jwt = jwtMiddleware<RouterMiddleware<string>>({ key: jwtKey, onSuccess });
+const jwt = jwtMiddleware<RouterMiddleware<string>>({
+  key: jwtKey,
+  onSuccess,
+});
 export { jwt };

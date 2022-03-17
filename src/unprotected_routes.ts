@@ -4,6 +4,7 @@ import {
   authors,
   categories,
   config,
+  init,
   pages,
   posts,
   sitemap,
@@ -69,5 +70,8 @@ unprotectedRouter.post("/users/signup", users.signupUser);
 
 // Sitemap
 unprotectedRouter.get("/sitemap", sitemap.generateSitemap);
+
+// Init
+unprotectedRouter.get("/init", init.getInitStatus);
 
 export { unprotectedRouter };

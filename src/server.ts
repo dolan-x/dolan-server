@@ -1,12 +1,11 @@
 // Copyright 2022 the Dolan authors. All rights reserved. MIT license.
-import "https://deno.land/x/xhr@0.1.2/mod.ts"; // XMLHttpRequest的Polyfill
-import { Application, colors, oakCors, parse } from "../deps.ts";
+import { Application, colors, oakCors, parseFlags } from "../deps.ts";
 import { unprotectedRouter } from "./unprotected_routes.ts";
 import { protectedRouter } from "./protected_routes.ts";
 import { errorHandler } from "./middleware/mod.ts";
 import { User } from "./types/mod.ts";
 
-const parsedArgs = parse(Deno.args);
+const parsedArgs = parseFlags(Deno.args);
 
 interface ApplicationState {
   userInfo: User;

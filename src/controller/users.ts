@@ -1,11 +1,13 @@
-import { createJwt, md5, RouterMiddleware, sha3, Status } from "../../deps.ts";
+import { createJwt, md5, RouterMiddleware, Status } from "../../deps.ts";
 
+import { getStorage, jwtKey } from "../lib/mod.ts";
 import {
+  argon2id,
+  argon2Verify,
   createResponse,
-  getStorage,
-  jwtKey,
   validateRequestBody,
-} from "../lib/mod.ts";
+} from "../utils/mod.ts";
+
 import { User } from "../types/mod.ts";
 
 const storage = getStorage("Users");
@@ -31,7 +33,7 @@ export const signupUser: RouterMiddleware<string> = async (ctx) => {
   }
   data.type = "admin"; // 测试版 唯一的用户（最先注册的）为管理员
   data.displayName = data.displayName || data.username;
-  data.password = await sha3(data.password);
+  data.password = await argon2id(data.password);
   await storage.add(data);
   ctx.response.body = createResponse({ data: {} });
 };
@@ -51,7 +53,7 @@ export const updateUser: RouterMiddleware<string> = async (ctx) => {
     updateData.displayName = displayName;
   }
   if (password) {
-    updateData.password = await sha3(password);
+    updateData.password = await argon2id(password);
   }
   await storage.update(updateData, { username });
   ctx.response.body = createResponse({ data: {} });
@@ -71,7 +73,7 @@ export const loginUser: RouterMiddleware<string> = async (ctx) => {
     ctx.throw(Status.BadRequest, `User(UserName: ${username}) does not exist`);
     return;
   }
-  if (user.password !== await sha3(password)) {
+  if (!await argon2Verify({ password, hash: user.password })) {
     ctx.throw(
       Status.BadRequest,
       `User(UserName: ${username})'s password is incorrect`,

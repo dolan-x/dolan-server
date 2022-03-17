@@ -13,6 +13,6 @@ export const getUserInfo: RouterMiddleware<string> = async (ctx, next) => {
     const token = authHeader.replace("Bearer ", "");
     const payload = await verifyJwt(token, jwtKey);
     ctx.state.userInfo = payload;
-  } catch {}
+  } catch { /* Make linter happy */ }
   await next();
 };

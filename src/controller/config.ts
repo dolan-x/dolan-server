@@ -1,11 +1,11 @@
 import { RouterMiddleware, Status } from "../../deps.ts";
 
+import { getStorage } from "../lib/mod.ts";
 import {
   CLOUD_CONFIG_NAMES,
   createResponse,
-  getStorage,
   validateRequestBody,
-} from "../lib/mod.ts";
+} from "../utils/mod.ts";
 
 const storage = getStorage("Config");
 

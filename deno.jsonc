@@ -12,7 +12,14 @@
   },
   "lint": {
     "files": {
-      "include": ["./src/", "./config.ts", "./deps.ts"]
+      "include": [
+        "./src/",
+        "./tests/",
+        "./config.ts",
+        "./deps.ts",
+        "./test_deps.ts",
+        "./deno.jsonc"
+      ]
     },
     "rules": {
       "tags": ["recommended"],
@@ -21,7 +28,14 @@
   },
   "fmt": {
     "files": {
-      "include": ["./src/", "./config.ts", "./deps.ts", "./deno.jsonc"]
+      "include": [
+        "./src/",
+        "./tests/",
+        "./config.ts",
+        "./deps.ts",
+        "./test_deps.ts",
+        "./deno.jsonc"
+      ]
     },
     "options": {
       "useTabs": false,

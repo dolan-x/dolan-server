@@ -2,7 +2,7 @@ import { envConfig, SupportedStorages } from "./deps.ts";
 
 try {
   await envConfig({ export: true });
-} catch {}
+} catch { /* Make linter happy */ }
 const e = (key: string) => Deno.env.get(key);
 type Config = {
   storageType: SupportedStorages;
@@ -13,7 +13,7 @@ type Config = {
   detaProjectKey?: string;
 };
 const config: Config = {
-  storageType: e("STORAGE_TYPE") as SupportedStorages, // SupportedStorage
+  storageType: e("STORAGE_TYPE") as SupportedStorages,
   leanAppId: e("LEAN_APP_ID"),
   leanAppKey: e("LEAN_APP_KEY"),
   leanMasterKey: e("LEAN_MASTER_KEY"),

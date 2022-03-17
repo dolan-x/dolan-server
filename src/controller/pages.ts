@@ -1,6 +1,7 @@
 import { helpers, RouterMiddleware, Status } from "../../deps.ts";
 
-import { createResponse, getStorage, validateRequestBody } from "../lib/mod.ts";
+import { getStorage } from "../lib/mod.ts";
+import { createResponse, validateRequestBody } from "../utils/mod.ts";
 
 const pagesStorage = getStorage("Pages");
 const configStorage = getStorage("Config");
@@ -24,6 +25,7 @@ export const getPages: RouterMiddleware<string> = async (ctx) => {
     ? (paramPageSize >= maxPageSize ? maxPageSize : paramPageSize)
     : maxPageSize;
   const page = Number(_paramPage); // 当前页数
+  // deno-lint-ignore no-explicit-any
   const where: Record<string, any> = {};
   if (!ctx.state.userInfo) {
     where.hidden = false;

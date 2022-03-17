@@ -7,7 +7,8 @@ import {
   Status,
 } from "../../deps.ts";
 
-import { createResponse, getStorage, validateRequestBody } from "../lib/mod.ts";
+import { getStorage } from "../lib/mod.ts";
+import { createResponse, validateRequestBody } from "../utils/mod.ts";
 
 const categoriesStorage = getStorage("Categories");
 const postsStorage = getStorage("Posts");

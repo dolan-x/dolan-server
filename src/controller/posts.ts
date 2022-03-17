@@ -1,6 +1,7 @@
-import { helpers, RouterMiddleware, shared, Status } from "../../deps.ts";
+import { helpers, RouterMiddleware, Status } from "../../deps.ts";
 
-import { createResponse, getStorage, validateRequestBody } from "../lib/mod.ts";
+import { getStorage } from "../lib/mod.ts";
+import { createResponse, validateRequestBody } from "../utils/mod.ts";
 
 const postsStorage = getStorage("Posts");
 const configStorage = getStorage("Config");
@@ -20,13 +21,13 @@ export const getPosts: RouterMiddleware<string> = async (ctx) => {
     { mergeParams: true },
   );
   const paramPageSize = Number(_paramPageSize); // 每页文章数
-  console.log(await configStorage.select({ name: "posts" }));
   const { maxPageSize = 10 } =
     (await configStorage.select({ name: "posts" }))[0]; // 最大每页文章数
   const pageSize = paramPageSize // 最终每页文章数
     ? (paramPageSize >= maxPageSize ? maxPageSize : paramPageSize)
     : maxPageSize;
   const page = Number(_paramPage); // 当前页数
+  // deno-lint-ignore no-explicit-any
   const where: Record<string, any> = {};
   if (!ctx.state.userInfo) {
     where.status = ["!=", "draft"];
@@ -101,6 +102,10 @@ export const createPost: RouterMiddleware<string> = async (ctx) => {
     created = new Date().toISOString(),
     updated = new Date().toISOString(),
   } = requestBody;
+  if (!slug) {
+    ctx.throw(Status.BadRequest, "Slug is required");
+    return;
+  }
   let { excerpt = "" } = requestBody;
   if (!excerpt) {
     excerpt = content.slice(0, 100); // 没有摘要则截取前100个字符

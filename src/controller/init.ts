@@ -1,9 +1,14 @@
 import { RouterMiddleware, shared, Status } from "../../deps.ts";
 
-import { createResponse, getStorage, initValues } from "../lib/mod.ts";
+import { getStorage, initValues } from "../lib/mod.ts";
+import { createResponse } from "../utils/mod.ts";
 
 const postsStorage = getStorage("Posts");
 const configStorage = getStorage("Config");
+
+export const getInitStatus: RouterMiddleware<string> = async (ctx) => {
+  ctx.response.body = createResponse({ data: await configStorage.count() > 0 });
+};
 
 export const init: RouterMiddleware<string> = async (ctx) => {
   if (await configStorage.count() > 0) {
