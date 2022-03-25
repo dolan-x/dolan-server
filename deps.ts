@@ -1,5 +1,5 @@
 // @dolan-x/shared
-export * as shared from "https://esm.sh/@dolan-x/shared@0.0.13";
+export * as shared from "https://esm.sh/@dolan-x/shared@0.0.19";
 // Lodash
 export * as _ from "https://deno.land/x/lodash@4.17.15-es/lodash.js";
 // just-omit
@@ -20,7 +20,7 @@ export type {
 } from "https://deno.land/x/oak@v10.4.0/mod.ts";
 // Oak JWT
 export { jwtMiddleware } from "https://denopkg.com/halvardssm/oak-middleware-jwt@master/mod.ts";
-export type { OnSuccessHandler } from "https://denopkg.com/so1ve/oak-middleware-jwt@6854a2b/mod.ts";
+export type { OnSuccessHandler } from "https://denopkg.com/halvardssm/oak-middleware-jwt@master/mod.ts";
 // Oak json error
 export { jsonErrorMiddleware } from "https://denopkg.com/so1ve/oak-json-error@main/mod.ts";
 // Oak cors

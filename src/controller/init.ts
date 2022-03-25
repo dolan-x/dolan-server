@@ -5,7 +5,7 @@ import { createResponse, getStorage, initValues } from "../lib/mod.ts";
 const postsStorage = getStorage("Posts");
 const configStorage = getStorage("Config");
 
-export const init: RouterMiddleware<string> = async (ctx) => {
+export const init: RouterMiddleware<"/init"> = async (ctx) => {
   if (await configStorage.count() > 0) {
     ctx.throw(Status.BadRequest, "Already initialized");
     return;

@@ -11,7 +11,7 @@ import { User } from "../types/mod.ts";
 const storage = getStorage("Users");
 
 /** POST /{VERSION}/users/signup */
-export const signupUser: RouterMiddleware<string> = async (ctx) => {
+export const signupUser: RouterMiddleware<"/users/signup"> = async (ctx) => {
   // TODO(@so1ve): 多用户支持
   // TODO(@so1ve): 邮箱验证
   // TODO(@so1ve): 头像
@@ -37,7 +37,7 @@ export const signupUser: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** PUT /{VERSION}/users */
-export const updateUser: RouterMiddleware<string> = async (ctx) => {
+export const updateUser: RouterMiddleware<"/users"> = async (ctx) => {
   const { username } = ctx.state.userInfo;
   let data;
   try {
@@ -58,12 +58,12 @@ export const updateUser: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** GET /{VERSION}/users/info */
-export const getUserInfo: RouterMiddleware<string> = (ctx) => {
+export const getUserInfo: RouterMiddleware<"/users/info"> = (ctx) => {
   ctx.response.body = createResponse({ data: ctx.state.userInfo });
 };
 
 /** POST /{VERSION}/users/login */
-export const loginUser: RouterMiddleware<string> = async (ctx) => {
+export const loginUser: RouterMiddleware<"/users/login"> = async (ctx) => {
   const requestBody = await validateRequestBody(ctx);
   const { username, password } = requestBody;
   const user: User = (await storage.select({ username }))[0];
