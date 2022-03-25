@@ -24,6 +24,7 @@ export const getPages: RouterMiddleware<"/pages"> = async (ctx) => {
     ? (paramPageSize >= maxPageSize ? maxPageSize : paramPageSize)
     : maxPageSize;
   const page = Number(_paramPage); // 当前页数
+  // deno-lint-ignore no-explicit-any
   const where: Record<string, any> = {};
   if (!ctx.state.userInfo) {
     where.hidden = false;
