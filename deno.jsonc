@@ -1,5 +1,10 @@
 {
   "$schema": "https://deno.land/x/deno/cli/schemas/config-file.v1.json",
+  "tasks": {
+    "start": "deno run -A --unstable src/server.ts",
+    "start-watch": "deno run -A --watch --unstable src/server.ts",
+    "test": "deno test -A --unstable"
+  },
   "compilerOptions": {
     "lib": [
       "deno.ns",

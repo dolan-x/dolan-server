@@ -9,13 +9,13 @@ export {
   Router,
   Status,
   STATUS_TEXT,
-} from "https://deno.land/x/oak@v10.4.0/mod.ts";
+} from "https://deno.land/x/oak@v10.5.0/mod.ts";
 export type {
   Context,
   ErrorStatus,
   Middleware,
   RouterMiddleware,
-} from "https://deno.land/x/oak@v10.4.0/mod.ts";
+} from "https://deno.land/x/oak@v10.5.0/mod.ts";
 // Oak JWT
 export { jwtMiddleware } from "https://denopkg.com/halvardssm/oak-middleware-jwt@251ce81/mod.ts";
 export type {
@@ -38,11 +38,10 @@ export {
   verify as verifyJwt,
 } from "https://deno.land/x/djwt@v2.4/mod.ts";
 // Std
-// TODO(@so1ve): Update Std
-export * as colors from "https://deno.land/std@0.128.0/fmt/colors.ts";
-export { parse as parseFlags } from "https://deno.land/std@0.128.0/flags/mod.ts";
+export * as colors from "https://deno.land/std@0.130.0/fmt/colors.ts";
+export { parse as parseFlags } from "https://deno.land/std@0.130.0/flags/mod.ts";
 // .env
-export { config as envConfig } from "https://deno.land/std@0.128.0/dotenv/mod.ts";
+export { config as envConfig } from "https://deno.land/std@0.130.0/dotenv/mod.ts";
 // Dittorm
 export { dittorm } from "https://deno.land/x/dittorm@v0.3.0/mod.ts";
 export type {
