@@ -8,7 +8,7 @@ const postsStorage = getStorage("Posts");
 const configStorage = getStorage("Config");
 
 /** GET /{VERSION}/authors */
-export const getAuthors: RouterMiddleware<string> = async (ctx) => {
+export const getAuthors: RouterMiddleware<"/authors"> = async (ctx) => {
   const {
     pageSize: _paramPageSize,
     page: _paramPage = 0,
@@ -41,7 +41,7 @@ export const getAuthors: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** GET /{VERSION}/authors/{slug} */
-export const getAuthor: RouterMiddleware<string> = async (ctx) => {
+export const getAuthor: RouterMiddleware<"/authors/:slug"> = async (ctx) => {
   const { slug } = ctx.params;
   const author = (await authorsStorage.select(
     { slug },
@@ -63,7 +63,9 @@ export const getAuthor: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** GET /{VERSION}/authors/{slug}/posts */
-export const getAuthorPosts: RouterMiddleware<string> = async (ctx) => {
+export const getAuthorPosts: RouterMiddleware<"/authors/:slug/posts"> = async (
+  ctx,
+) => {
   const { slug } = ctx.params;
   const allPosts: readonly shared.Post[] = Object.freeze( // TODO(@so1ve): 有没有高效点的实现啊喂！！
     await postsStorage.select(
@@ -93,7 +95,7 @@ export const getAuthorPosts: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** POST /{VERSION}/authors */
-export const createAuthor: RouterMiddleware<string> = async (ctx) => {
+export const createAuthor: RouterMiddleware<"/authors"> = async (ctx) => {
   const requestBody = await validateRequestBody(ctx);
 
   const { // 默认值
@@ -114,7 +116,7 @@ export const createAuthor: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** PUT /{VERSION}/authors/{slug} */
-export const updateAuthor: RouterMiddleware<string> = async (ctx) => {
+export const updateAuthor: RouterMiddleware<"/authors/:slug"> = async (ctx) => {
   const requestBody = await validateRequestBody(ctx);
   const { slug } = ctx.params;
   const exists = (await authorsStorage.select({ slug }))[0];
@@ -132,8 +134,8 @@ export const updateAuthor: RouterMiddleware<string> = async (ctx) => {
   ctx.response.body = createResponse({ data: resp });
 };
 
-/** DELETE /{VERSION}/posts/{slug} */
-export const deleteAuthor: RouterMiddleware<string> = async (ctx) => {
+/** DELETE /{VERSION}/authors/{slug} */
+export const deleteAuthor: RouterMiddleware<"/authors/:slug"> = async (ctx) => {
   const { slug } = ctx.params;
   const exists = (await authorsStorage.select({ slug }))[0];
   if (!exists) {

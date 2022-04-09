@@ -10,7 +10,7 @@ const configStorage = getStorage("Config");
  * GET /{VERSION}/pages
  * Query: pageSize, page
  */
-export const getPages: RouterMiddleware<string> = async (ctx) => {
+export const getPages: RouterMiddleware<"/pages"> = async (ctx) => {
   const {
     pageSize: _paramPageSize,
     page: _paramPage = 0,
@@ -48,7 +48,7 @@ export const getPages: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** GET /{VERSION}/pages/{slug} */
-export const getPage: RouterMiddleware<string> = async (ctx) => {
+export const getPage: RouterMiddleware<"/pages/:slug"> = async (ctx) => {
   const { slug } = ctx.params;
   const page = (await pagesStorage.select(
     { slug },
@@ -66,7 +66,7 @@ export const getPage: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** POST /{VERSION}/pages */
-export const createPage: RouterMiddleware<string> = async (ctx) => {
+export const createPage: RouterMiddleware<"/pages"> = async (ctx) => {
   const requestBody = await validateRequestBody(ctx);
   const { // 默认值
     title = "",
@@ -86,7 +86,7 @@ export const createPage: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** PUT /{VERSION}/pages/{slug} */
-export const updatePage: RouterMiddleware<string> = async (ctx) => {
+export const updatePage: RouterMiddleware<"/pages/:slug"> = async (ctx) => {
   const requestBody = await validateRequestBody(ctx);
   const { slug } = ctx.params;
   const exists = (await pagesStorage.select({ slug }))[0];
@@ -105,7 +105,7 @@ export const updatePage: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** DELETE /{VERSION}/pages/{slug} */
-export const deletePage: RouterMiddleware<string> = async (ctx) => {
+export const deletePage: RouterMiddleware<"/pages/:slug"> = async (ctx) => {
   const { slug } = ctx.params;
   const exists = (await pagesStorage.select({ slug }))[0];
   if (!exists) {

@@ -10,7 +10,7 @@ import {
 const storage = getStorage("Config");
 
 /** GET /{VERSION}/config/{name} */
-export const getConfig: RouterMiddleware<string> = async (ctx) => {
+export const getConfig: RouterMiddleware<"/config/:name"> = async (ctx) => {
   const { name } = ctx.params;
   const config = (await storage.select(
     { name },
@@ -31,7 +31,7 @@ export const getConfig: RouterMiddleware<string> = async (ctx) => {
 // 没有新建的操作，新建应当在初始化时完成
 
 /** PUT /{VERSION}/config/{name} */
-export const updateConfig: RouterMiddleware<string> = async (ctx) => {
+export const updateConfig: RouterMiddleware<"/config/:name"> = async (ctx) => {
   const { name } = ctx.params;
   if (!CLOUD_CONFIG_NAMES.includes(name)) {
     ctx.throw(Status.BadRequest, `Config(Name: ${name}) is invalid`);

@@ -11,7 +11,7 @@ const configStorage = getStorage("Config");
  * GET /{VERSION}/posts
  * Query: pageSize, page, desc
  */
-export const getPosts: RouterMiddleware<string> = async (ctx) => {
+export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
   const {
     pageSize: _paramPageSize,
     page: _paramPage = 0,
@@ -60,7 +60,7 @@ export const getPosts: RouterMiddleware<string> = async (ctx) => {
 
 // TODO(@so1ve): 携带有合法JWT Token时，可以返回草稿箱文章，否则返回Status.NotFound
 /** GET /{VERSION}/posts/{slug} */
-export const getPost: RouterMiddleware<string> = async (ctx) => {
+export const getPost: RouterMiddleware<"/posts/:slug"> = async (ctx) => {
   const { slug } = ctx.params;
   const post = (await postsStorage.select(
     { slug },
@@ -86,7 +86,7 @@ export const getPost: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** POST /{VERSION}/posts */
-export const createPost: RouterMiddleware<string> = async (ctx) => {
+export const createPost: RouterMiddleware<"/posts"> = async (ctx) => {
   const requestBody = await validateRequestBody(ctx);
   const { // 默认值
     title = "",
@@ -131,7 +131,7 @@ export const createPost: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** PUT /{VERSION}/posts/{slug} */
-export const updatePost: RouterMiddleware<string> = async (ctx) => {
+export const updatePost: RouterMiddleware<"/posts/:slug"> = async (ctx) => {
   const requestBody = await validateRequestBody(ctx);
   const { slug } = ctx.params;
   const exists = (await postsStorage.select({ slug }))[0];
@@ -150,7 +150,7 @@ export const updatePost: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** DELETE /{VERSION}/posts/{slug} */
-export const deletePost: RouterMiddleware<string> = async (ctx) => {
+export const deletePost: RouterMiddleware<"/posts/:slug"> = async (ctx) => {
   const { slug } = ctx.params;
   const exists = (await postsStorage.select({ slug }))[0];
   if (!exists) {

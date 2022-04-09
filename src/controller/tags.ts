@@ -8,7 +8,7 @@ const postsStorage = getStorage("Posts");
 const configStorage = getStorage("Config");
 
 /** GET /{VERSION}/tags */
-export const getTags: RouterMiddleware<string> = async (ctx) => {
+export const getTags: RouterMiddleware<"/tags"> = async (ctx) => {
   const {
     pageSize: _paramPageSize,
     page: _paramPage = 0,
@@ -40,7 +40,7 @@ export const getTags: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** GET /{VERSION}/tags/{slug} */
-export const getTag: RouterMiddleware<string> = async (ctx) => {
+export const getTag: RouterMiddleware<"/tags/:slug"> = async (ctx) => {
   const { slug } = ctx.params;
   const tag = (await tagsStorage.select(
     { slug },
@@ -61,7 +61,9 @@ export const getTag: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** GET /{VERSION}/tags/{slug}/count */
-export const getTagCount: RouterMiddleware<string> = async (ctx) => {
+export const getTagCount: RouterMiddleware<"/tags/:slug/count"> = async (
+  ctx,
+) => {
   const { slug } = ctx.params;
   const allPosts: readonly shared.Post[] = Object.freeze( // TODO(@so1ve): 有没有高效点的实现啊喂！！
     await postsStorage.select(
@@ -81,7 +83,7 @@ export const getTagCount: RouterMiddleware<string> = async (ctx) => {
 
 /** POST /{VERSION}/tags */
 // Tag会做重名检查，`name` `slug` 不能重复
-export const createTag: RouterMiddleware<string> = async (ctx) => {
+export const createTag: RouterMiddleware<"/tags"> = async (ctx) => {
   const requestBody = await validateRequestBody(ctx);
   const { // 默认值
     name = "",
@@ -110,7 +112,7 @@ export const createTag: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** PUT /{VERSION}/tags/{slug} */
-export const updateTag: RouterMiddleware<string> = async (ctx) => {
+export const updateTag: RouterMiddleware<"/tags/:slug"> = async (ctx) => {
   const { slug } = ctx.params;
   const exists = (await tagsStorage.select({ slug }))[0];
   if (!exists) {
@@ -129,7 +131,7 @@ export const updateTag: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** DELETE /{VERSION}/tags/{slug} */
-export const deleteTag: RouterMiddleware<string> = async (ctx) => {
+export const deleteTag: RouterMiddleware<"/tags/:slug"> = async (ctx) => {
   const { slug } = ctx.params;
   const exists = (await tagsStorage.select({ slug }))[0];
   if (!exists) {

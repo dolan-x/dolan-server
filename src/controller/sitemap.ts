@@ -12,7 +12,7 @@ const configStorage = getStorage("Config");
  * GET /{VERSION}/sitemap
  * Query: postsBaseUrl, tagsBaseUrl, categoriesBaseUrl
  */
-export const generateSitemap: RouterMiddleware<string> = async (ctx) => {
+export const generateSitemap: RouterMiddleware<"/sitemap"> = async (ctx) => {
   const [posts, tags, categories, config] = await Promise.all([
     postsStorage.select(
       { status: ["!=", "draft"] },

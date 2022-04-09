@@ -15,7 +15,7 @@ const postsStorage = getStorage("Posts");
 const configStorage = getStorage("Config");
 
 /** GET /{VERSION}/categories */
-export const getCategories: RouterMiddleware<string> = async (ctx) => {
+export const getCategories: RouterMiddleware<"/categories"> = async (ctx) => {
   const {
     pageSize: _paramPageSize,
     page: _paramPage = 0,
@@ -48,7 +48,9 @@ export const getCategories: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** GET /{VERSION}/categories/{slug} */
-export const getCategory: RouterMiddleware<string> = async (ctx) => {
+export const getCategory: RouterMiddleware<"/categories/:slug"> = async (
+  ctx,
+) => {
   const { slug } = ctx.params;
   const category = (await categoriesStorage.select(
     { slug },
@@ -72,27 +74,30 @@ export const getCategory: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** GET /{VERSION}/categories/{slug}/count */
-export const getCategoryCount: RouterMiddleware<string> = async (ctx) => {
-  const { slug } = ctx.params;
-  const allPosts: readonly shared.Post[] = Object.freeze( // TODO(@so1ve): 有没有高效点的实现啊喂！！
-    await postsStorage.select(
-      {},
-      {
-        fields: [
-          "categories",
-        ],
-      },
-    ),
-  );
-  const postsIncludeThisCategory = allPosts.filter((post) =>
-    post.categories.includes(slug)
-  );
-  ctx.response.body = createResponse({ data: postsIncludeThisCategory.length });
-};
+export const getCategoryCount: RouterMiddleware<"/categories/:slug/count"> =
+  async (ctx) => {
+    const { slug } = ctx.params;
+    const allPosts: readonly shared.Post[] = Object.freeze( // TODO(@so1ve): 有没有高效点的实现啊喂！！
+      await postsStorage.select(
+        {},
+        {
+          fields: [
+            "categories",
+          ],
+        },
+      ),
+    );
+    const postsIncludeThisCategory = allPosts.filter((post) =>
+      post.categories.includes(slug)
+    );
+    ctx.response.body = createResponse({
+      data: postsIncludeThisCategory.length,
+    });
+  };
 
 /** POST /{VERSION}/categories */
 // Category会做重名检查，不能重复
-export const createCategory: RouterMiddleware<string> = async (ctx) => {
+export const createCategory: RouterMiddleware<"/categories"> = async (ctx) => {
   const requestBody = await validateRequestBody(ctx);
   const { // 默认值
     name = "",
@@ -115,7 +120,9 @@ export const createCategory: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** PUT /{VERSION}/categories/{slug} */
-export const updateCategory: RouterMiddleware<string> = async (ctx) => {
+export const updateCategory: RouterMiddleware<"/categories/:slug"> = async (
+  ctx,
+) => {
   const requestBody = await validateRequestBody(ctx);
   const { slug } = ctx.params;
   const exists = (await categoriesStorage.select({ slug }))[0];
@@ -134,7 +141,9 @@ export const updateCategory: RouterMiddleware<string> = async (ctx) => {
 };
 
 /** DELETE /{VERSION}/categories/{slug} */
-export const deleteCategory: RouterMiddleware<string> = async (ctx) => {
+export const deleteCategory: RouterMiddleware<"/categories/:slug"> = async (
+  ctx,
+) => {
   const { slug } = ctx.params;
   const exists = (await categoriesStorage.select({ slug }))[0];
   if (!exists) {
