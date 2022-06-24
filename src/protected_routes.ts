@@ -65,7 +65,7 @@ protectedRouter.delete(`/pages/:slug`, pages.deletePage);
 protectedRouter.put(`/config/:name`, config.updateConfig);
 
 // Update user
-protectedRouter.put(`/user`, users.updateUser);
+protectedRouter.put(`/users`, users.updateUser);
 
 // Init
 protectedRouter.post(`/init`, init.init);

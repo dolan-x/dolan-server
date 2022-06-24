@@ -8,7 +8,7 @@ import {
 } from "../../deps.ts";
 
 import { getStorage } from "../lib/mod.ts";
-import { createResponse, validateRequestBody } from "../utils/mod.ts";
+import { cr, validateRequestBody } from "../utils/mod.ts";
 
 const categoriesStorage = getStorage("Categories");
 const postsStorage = getStorage("Posts");
@@ -44,7 +44,7 @@ export const getCategories: RouterMiddleware<"/categories"> = async (ctx) => {
       ],
     },
   );
-  ctx.response.body = createResponse({ data: categories });
+  ctx.response.body = cr.success({ data: categories });
 };
 
 /** GET /{VERSION}/categories/{slug} */
@@ -70,7 +70,7 @@ export const getCategory: RouterMiddleware<"/categories/:slug"> = async (
     );
     return;
   }
-  ctx.response.body = createResponse({ data: category });
+  ctx.response.body = cr.success({ data: category });
 };
 
 /** GET /{VERSION}/categories/{slug}/count */
@@ -90,7 +90,7 @@ export const getCategoryCount: RouterMiddleware<"/categories/:slug/count"> =
     const postsIncludeThisCategory = allPosts.filter((post) =>
       post.categories.includes(slug)
     );
-    ctx.response.body = createResponse({
+    ctx.response.body = cr.success({
       data: postsIncludeThisCategory.length,
     });
   };
@@ -114,7 +114,7 @@ export const createCategory: RouterMiddleware<"/categories"> = async (ctx) => {
     name,
     description,
   });
-  ctx.response.body = createResponse({
+  ctx.response.body = cr.success({
     data: resp,
   });
 };
@@ -137,7 +137,7 @@ export const updateCategory: RouterMiddleware<"/categories/:slug"> = async (
     },
     { slug },
   );
-  ctx.response.body = createResponse({ data: resp });
+  ctx.response.body = cr.success({ data: resp });
 };
 
 /** DELETE /{VERSION}/categories/{slug} */
@@ -151,5 +151,5 @@ export const deleteCategory: RouterMiddleware<"/categories/:slug"> = async (
     return;
   }
   await categoriesStorage.delete({ slug });
-  ctx.response.body = createResponse();
+  ctx.response.body = cr.success();
 };

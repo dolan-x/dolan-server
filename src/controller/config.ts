@@ -1,11 +1,7 @@
 import { RouterMiddleware, Status } from "../../deps.ts";
 
 import { getStorage } from "../lib/mod.ts";
-import {
-  CLOUD_CONFIG_NAMES,
-  createResponse,
-  validateRequestBody,
-} from "../utils/mod.ts";
+import { CLOUD_CONFIG_NAMES, cr, validateRequestBody } from "../utils/mod.ts";
 
 const storage = getStorage("Config");
 
@@ -25,7 +21,7 @@ export const getConfig: RouterMiddleware<"/config/:name"> = async (ctx) => {
     ctx.throw(Status.NotFound, `Config(Name: ${name}) does not exist`);
     return;
   }
-  ctx.response.body = createResponse({ data: config.value });
+  ctx.response.body = cr.success({ data: config.value });
 };
 
 // 没有新建的操作，新建应当在初始化时完成
@@ -42,7 +38,7 @@ export const updateConfig: RouterMiddleware<"/config/:name"> = async (ctx) => {
     { name, value: requestBody },
     { name },
   );
-  ctx.response.body = createResponse({ data: result });
+  ctx.response.body = cr.success({ data: result });
 };
 
 // 也没有删除的操作

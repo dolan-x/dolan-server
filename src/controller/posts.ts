@@ -1,7 +1,7 @@
 import { helpers, RouterMiddleware, Status } from "../../deps.ts";
 
 import { getStorage } from "../lib/mod.ts";
-import { createResponse, validateRequestBody } from "../utils/mod.ts";
+import { cr, validateRequestBody } from "../utils/mod.ts";
 
 const postsStorage = getStorage("Posts");
 const configStorage = getStorage("Config");
@@ -23,7 +23,7 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
   const paramPageSize = Number(_paramPageSize); // 每页文章数
   const { maxPageSize = 10 } =
     (await configStorage.select({ name: "posts" }))[0]; // 最大每页文章数
-  const pageSize = paramPageSize // 最终每页文章数
+  const pageSize: number = paramPageSize // 最终每页文章数
     ? (paramPageSize >= maxPageSize ? maxPageSize : paramPageSize)
     : maxPageSize;
   const page = Number(_paramPage); // 当前页数
@@ -33,29 +33,37 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
     where.status = ["!=", "draft"];
     where.hidden = false;
   }
-  const posts = await postsStorage.select(
-    where,
-    {
-      desc, // 避免与Leancloud的字段冲突
-      limit: pageSize,
-      offset: Math.max((page - 1) * pageSize, 0),
-      fields: [
-        "slug",
-        "title",
-        "content",
-        "excerpt",
-        "sticky",
-        "status",
-        "authors",
-        "tags",
-        "categories",
-        "metas",
-        "created",
-        "updated",
-      ],
+  const [posts, postCount] = await Promise.all([
+    postsStorage.select(
+      where,
+      {
+        desc, // 避免与Leancloud的字段冲突
+        limit: pageSize,
+        offset: Math.max((page - 1) * pageSize, 0),
+        fields: [
+          "slug",
+          "title",
+          "content",
+          "excerpt",
+          "sticky",
+          "status",
+          "authors",
+          "tags",
+          "categories",
+          "metas",
+          "created",
+          "updated",
+        ],
+      },
+    ),
+    postsStorage.count(where),
+  ]);
+  ctx.response.body = cr.success({
+    data: posts,
+    meta: {
+      pages: Math.ceil(postCount / pageSize),
     },
-  );
-  ctx.response.body = createResponse({ data: posts });
+  });
 };
 
 // TODO(@so1ve): 携带有合法JWT Token时，可以返回草稿箱文章，否则返回Status.NotFound
@@ -82,7 +90,7 @@ export const getPost: RouterMiddleware<"/posts/:slug"> = async (ctx) => {
     },
   ))[0]; // Select返回的是一个列表，预期只会有一个返回数据
   if (!post) ctx.throw(Status.NotFound, `Post(Slug: ${slug}) does not exist`);
-  ctx.response.body = createResponse({ data: post });
+  ctx.response.body = cr.success({ data: post });
 };
 
 /** POST /{VERSION}/posts */
@@ -106,6 +114,12 @@ export const createPost: RouterMiddleware<"/posts"> = async (ctx) => {
     ctx.throw(Status.BadRequest, "Slug is required");
     return;
   }
+  const dupelicate = await postsStorage.select({
+    slug,
+  });
+  if (dupelicate.length) {
+    ctx.throw(Status.BadRequest, `Slug(${slug}) already exists`);
+  }
   let { excerpt = "" } = requestBody;
   if (!excerpt) {
     excerpt = content.slice(0, 100); // 没有摘要则截取前100个字符
@@ -125,7 +139,7 @@ export const createPost: RouterMiddleware<"/posts"> = async (ctx) => {
     created,
     updated,
   });
-  ctx.response.body = createResponse({
+  ctx.response.body = cr.success({
     data: resp,
   });
 };
@@ -146,7 +160,7 @@ export const updatePost: RouterMiddleware<"/posts/:slug"> = async (ctx) => {
     },
     { slug },
   );
-  ctx.response.body = createResponse({ data: resp });
+  ctx.response.body = cr.success({ data: resp });
 };
 
 /** DELETE /{VERSION}/posts/{slug} */
@@ -158,5 +172,5 @@ export const deletePost: RouterMiddleware<"/posts/:slug"> = async (ctx) => {
     return;
   }
   await postsStorage.delete({ slug });
-  ctx.response.body = createResponse();
+  ctx.response.body = cr.success();
 };

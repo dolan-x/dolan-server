@@ -1,7 +1,7 @@
 import { helpers, RouterMiddleware, shared, Status } from "../../deps.ts";
 
 import { getStorage } from "../lib/mod.ts";
-import { createResponse, validateRequestBody } from "../utils/mod.ts";
+import { cr, validateRequestBody } from "../utils/mod.ts";
 
 const authorsStorage = getStorage("Authors");
 const postsStorage = getStorage("Posts");
@@ -37,7 +37,7 @@ export const getAuthors: RouterMiddleware<"/authors"> = async (ctx) => {
       ],
     },
   );
-  ctx.response.body = createResponse({ data: authors });
+  ctx.response.body = cr.success({ data: authors });
 };
 
 /** GET /{VERSION}/authors/{slug} */
@@ -59,7 +59,7 @@ export const getAuthor: RouterMiddleware<"/authors/:slug"> = async (ctx) => {
     ctx.throw(Status.NotFound, `Author(Slug: ${slug}) does not exist`);
     return;
   }
-  ctx.response.body = createResponse({ data: author });
+  ctx.response.body = cr.success({ data: author });
 };
 
 /** GET /{VERSION}/authors/{slug}/posts */
@@ -91,7 +91,7 @@ export const getAuthorPosts: RouterMiddleware<"/authors/:slug/posts"> = async (
   const postsIncludeThisAuthor = allPosts.filter((post) =>
     post.authors.includes(slug)
   );
-  ctx.response.body = createResponse({ data: postsIncludeThisAuthor });
+  ctx.response.body = cr.success({ data: postsIncludeThisAuthor });
 };
 
 /** POST /{VERSION}/authors */
@@ -110,7 +110,7 @@ export const createAuthor: RouterMiddleware<"/authors"> = async (ctx) => {
     avatar,
     bio,
   });
-  ctx.response.body = createResponse({
+  ctx.response.body = cr.success({
     data: resp,
   });
 };
@@ -131,7 +131,7 @@ export const updateAuthor: RouterMiddleware<"/authors/:slug"> = async (ctx) => {
     },
     { slug },
   );
-  ctx.response.body = createResponse({ data: resp });
+  ctx.response.body = cr.success({ data: resp });
 };
 
 /** DELETE /{VERSION}/authors/{slug} */
@@ -143,5 +143,5 @@ export const deleteAuthor: RouterMiddleware<"/authors/:slug"> = async (ctx) => {
     return;
   }
   await authorsStorage.delete({ slug });
-  ctx.response.body = createResponse();
+  ctx.response.body = cr.success();
 };

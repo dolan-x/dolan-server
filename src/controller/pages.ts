@@ -1,7 +1,7 @@
 import { helpers, RouterMiddleware, Status } from "../../deps.ts";
 
 import { getStorage } from "../lib/mod.ts";
-import { createResponse, validateRequestBody } from "../utils/mod.ts";
+import { cr, validateRequestBody } from "../utils/mod.ts";
 
 const pagesStorage = getStorage("Pages");
 const configStorage = getStorage("Config");
@@ -44,7 +44,7 @@ export const getPages: RouterMiddleware<"/pages"> = async (ctx) => {
       ],
     },
   );
-  ctx.response.body = createResponse({ data: pages });
+  ctx.response.body = cr.success({ data: pages });
 };
 
 /** GET /{VERSION}/pages/{slug} */
@@ -62,7 +62,7 @@ export const getPage: RouterMiddleware<"/pages/:slug"> = async (ctx) => {
     },
   ))[0]; // Select返回的是一个列表，预期只会有一个返回数据
   if (!page) ctx.throw(Status.NotFound, `Page(Slug: ${slug}) does not exist`);
-  ctx.response.body = createResponse({ data: page });
+  ctx.response.body = cr.success({ data: page });
 };
 
 /** POST /{VERSION}/pages */
@@ -80,7 +80,7 @@ export const createPage: RouterMiddleware<"/pages"> = async (ctx) => {
     content,
     hidden,
   });
-  ctx.response.body = createResponse({
+  ctx.response.body = cr.success({
     data: resp,
   });
 };
@@ -101,7 +101,7 @@ export const updatePage: RouterMiddleware<"/pages/:slug"> = async (ctx) => {
     },
     { slug },
   );
-  ctx.response.body = createResponse({ data: resp });
+  ctx.response.body = cr.success({ data: resp });
 };
 
 /** DELETE /{VERSION}/pages/{slug} */
@@ -113,5 +113,5 @@ export const deletePage: RouterMiddleware<"/pages/:slug"> = async (ctx) => {
     return;
   }
   await pagesStorage.delete({ slug });
-  ctx.response.body = createResponse();
+  ctx.response.body = cr.success();
 };

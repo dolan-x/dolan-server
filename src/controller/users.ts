@@ -4,7 +4,7 @@ import { getStorage, jwtKey } from "../lib/mod.ts";
 import {
   argon2id,
   argon2Verify,
-  createResponse,
+  cr,
   validateRequestBody,
 } from "../utils/mod.ts";
 
@@ -35,7 +35,7 @@ export const signupUser: RouterMiddleware<"/users/signup"> = async (ctx) => {
   data.displayName = data.displayName || data.username;
   data.password = await argon2id(data.password);
   await storage.add(data);
-  ctx.response.body = createResponse({ data: {} });
+  ctx.response.body = cr.success();
 };
 
 /** PUT /{VERSION}/users */
@@ -56,12 +56,12 @@ export const updateUser: RouterMiddleware<"/users"> = async (ctx) => {
     updateData.password = await argon2id(password);
   }
   await storage.update(updateData, { username });
-  ctx.response.body = createResponse({ data: {} });
+  ctx.response.body = cr.success();
 };
 
 /** GET /{VERSION}/users/info */
 export const getUserInfo: RouterMiddleware<"/users/info"> = (ctx) => {
-  ctx.response.body = createResponse({ data: ctx.state.userInfo });
+  ctx.response.body = cr.success({ data: ctx.state.userInfo });
 };
 
 /** POST /{VERSION}/users/login */
@@ -81,7 +81,7 @@ export const loginUser: RouterMiddleware<"/users/login"> = async (ctx) => {
     return;
   }
 
-  ctx.response.body = createResponse({
+  ctx.response.body = cr.success({
     data: {
       ...user,
       password: null,

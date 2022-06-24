@@ -1,7 +1,7 @@
 import { helpers, RouterMiddleware, shared, Status } from "../../deps.ts";
 
 import { getStorage } from "../lib/mod.ts";
-import { createResponse, validateRequestBody } from "../utils/mod.ts";
+import { cr, validateRequestBody } from "../utils/mod.ts";
 
 const tagsStorage = getStorage("Tags");
 const postsStorage = getStorage("Posts");
@@ -36,7 +36,7 @@ export const getTags: RouterMiddleware<"/tags"> = async (ctx) => {
       ],
     },
   );
-  ctx.response.body = createResponse({ data: tags });
+  ctx.response.body = cr.success({ data: tags });
 };
 
 /** GET /{VERSION}/tags/{slug} */
@@ -57,7 +57,7 @@ export const getTag: RouterMiddleware<"/tags/:slug"> = async (ctx) => {
     ctx.throw(Status.NotFound, `Tag(Slug: ${slug}) does not exist`);
     return;
   }
-  ctx.response.body = createResponse({ data: tag });
+  ctx.response.body = cr.success({ data: tag });
 };
 
 /** GET /{VERSION}/tags/{slug}/count */
@@ -78,7 +78,7 @@ export const getTagCount: RouterMiddleware<"/tags/:slug/count"> = async (
   const postsIncludeThisTag = allPosts.filter((post) =>
     post.tags.includes(slug)
   );
-  ctx.response.body = createResponse({ data: postsIncludeThisTag.length });
+  ctx.response.body = cr.success({ data: postsIncludeThisTag.length });
 };
 
 /** POST /{VERSION}/tags */
@@ -106,7 +106,7 @@ export const createTag: RouterMiddleware<"/tags"> = async (ctx) => {
     name,
     description,
   });
-  ctx.response.body = createResponse({
+  ctx.response.body = cr.success({
     data: resp,
   });
 };
@@ -127,7 +127,7 @@ export const updateTag: RouterMiddleware<"/tags/:slug"> = async (ctx) => {
     },
     { slug },
   );
-  ctx.response.body = createResponse({ data: resp });
+  ctx.response.body = cr.success({ data: resp });
 };
 
 /** DELETE /{VERSION}/tags/{slug} */
@@ -139,5 +139,5 @@ export const deleteTag: RouterMiddleware<"/tags/:slug"> = async (ctx) => {
     return;
   }
   await tagsStorage.delete({ slug });
-  ctx.response.body = createResponse();
+  ctx.response.body = cr.success();
 };
