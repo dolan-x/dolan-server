@@ -1,4 +1,10 @@
-import { createJwt, md5, RouterMiddleware, Status } from "../../deps.ts";
+import {
+  createJwt,
+  getNumericDate,
+  md5,
+  RouterMiddleware,
+  Status,
+} from "../../deps.ts";
 
 import { getStorage, jwtKey } from "../lib/mod.ts";
 import {
@@ -88,7 +94,10 @@ export const loginUser: RouterMiddleware<"/users/login"> = async (ctx) => {
       usernameMd5: await md5(user.username.toLowerCase()),
       token: await createJwt(
         { alg: "HS512", typ: "JWT" },
-        { username: user.username },
+        {
+          username: user.username,
+          exp: getNumericDate(2 * 60 * 60),
+        },
         jwtKey,
       ),
     },

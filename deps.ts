@@ -32,6 +32,7 @@ export {
 // JWT
 export {
   create as createJwt,
+  getNumericDate,
   verify as verifyJwt,
 } from "https://deno.land/x/djwt@v2.4/mod.ts";
 // Std
