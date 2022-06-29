@@ -23,7 +23,8 @@
         "./config.ts",
         "./deps.ts",
         "./test_deps.ts",
-        "./deno.jsonc"
+        "./deno.jsonc",
+        "import_map.json"
       ]
     },
     "rules": {
@@ -39,7 +40,8 @@
         "./config.ts",
         "./deps.ts",
         "./test_deps.ts",
-        "./deno.jsonc"
+        "./deno.jsonc",
+        "import_map.json"
       ]
     },
     "options": {
