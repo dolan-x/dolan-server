@@ -4,19 +4,19 @@ type SuccessOptions = {
   code?: Status;
   message?: string;
   data?: unknown;
-  meta?: Record<string, unknown>;
+  metas?: Record<string, unknown>;
 };
 export function success({
   code = Status.OK,
   message = STATUS_TEXT.get(code),
   data = {},
-  meta = {},
+  metas = {},
 }: SuccessOptions = {}) {
   return {
     code,
     message,
     data,
-    meta,
+    metas,
   };
 }
 
