@@ -96,7 +96,7 @@ export const getCategoryCount: RouterMiddleware<"/categories/:slug/count"> =
   };
 
 /** POST /{VERSION}/categories */
-// Category会做重名检查，不能重复
+// Slug不能重复
 export const createCategory: RouterMiddleware<"/categories"> = async (ctx) => {
   const requestBody = await validateRequestBody(ctx);
   const { // 默认值
@@ -104,9 +104,12 @@ export const createCategory: RouterMiddleware<"/categories"> = async (ctx) => {
     slug = name,
     description = "",
   } = requestBody;
-  const duplicate = await categoriesStorage.select({ name });
+  if (slug === "") {
+    ctx.throw(Status.BadRequest, `Slug or Name is required`);
+  }
+  const duplicate = await categoriesStorage.select({ slug });
   if (duplicate.length) {
-    ctx.throw(Status.Conflict, `Category(Name: ${name}) already exists`);
+    ctx.throw(Status.Conflict, `Category(Slug: ${slug}) already exists`);
     return;
   }
   const resp = await categoriesStorage.add({

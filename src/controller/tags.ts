@@ -82,7 +82,7 @@ export const getTagCount: RouterMiddleware<"/tags/:slug/count"> = async (
 };
 
 /** POST /{VERSION}/tags */
-// Tag会做重名检查，`name` `slug` 不能重复
+// `slug` 不能重复
 export const createTag: RouterMiddleware<"/tags"> = async (ctx) => {
   const requestBody = await validateRequestBody(ctx);
   const { // 默认值
@@ -90,15 +90,21 @@ export const createTag: RouterMiddleware<"/tags"> = async (ctx) => {
     slug = name,
     description = "",
   } = requestBody;
+  if (slug === "") {
+    ctx.throw(Status.BadRequest, `Slug or Name is required`);
+  }
   const duplicate = await tagsStorage.select({
-    _complex: {
-      name,
-      slug,
-      _logic: "or",
-    },
+    slug,
+  });
+  console.log({
+    duplicate,
+    requestBody,
+    name,
+    slug,
+    description,
   });
   if (duplicate.length) {
-    ctx.throw(Status.Conflict, `Tag(Name: ${name}) already exists`);
+    ctx.throw(Status.Conflict, `Tag(Slug: ${slug}) already exists`);
     return;
   }
   const resp = await tagsStorage.add({
