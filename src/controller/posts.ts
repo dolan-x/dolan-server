@@ -60,7 +60,7 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
   ]);
   ctx.response.body = cr.success({
     data: posts,
-    meta: {
+    metas: {
       pages: Math.ceil(postCount / pageSize),
     },
   });
@@ -148,16 +148,14 @@ export const createPost: RouterMiddleware<"/posts"> = async (ctx) => {
 export const updatePost: RouterMiddleware<"/posts/:slug"> = async (ctx) => {
   const requestBody = await validateRequestBody(ctx);
   const { slug } = ctx.params;
-  const exists = (await postsStorage.select({ slug }))[0];
-  if (!exists) {
+  console.log(slug,requestBody)
+  const exists = await postsStorage.select({ slug });
+  if (!exists.length) {
     ctx.throw(Status.NotFound, `Post(Slug: ${slug}) does not exist`);
     return;
   }
   const resp = await postsStorage.update(
-    {
-      ...requestBody,
-      slug,
-    },
+    requestBody,
     { slug },
   );
   ctx.response.body = cr.success({ data: resp });

@@ -89,6 +89,7 @@ export const createTag: RouterMiddleware<"/tags"> = async (ctx) => {
     name = "",
     slug = name,
     description = "",
+    color = "",
   } = requestBody;
   if (slug === "") {
     ctx.throw(Status.BadRequest, `Slug or Name is required`);
@@ -111,6 +112,7 @@ export const createTag: RouterMiddleware<"/tags"> = async (ctx) => {
     slug,
     name,
     description,
+    color,
   });
   ctx.response.body = cr.success({
     data: resp,
