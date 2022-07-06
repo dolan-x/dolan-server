@@ -1,4 +1,4 @@
-import { assert } from "../../test_deps.ts";
+import { assert } from "../../deps.test.ts";
 
 import { argon2id, argon2Verify } from "./crypto.ts";
 

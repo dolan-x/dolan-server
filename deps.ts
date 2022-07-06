@@ -20,9 +20,11 @@ export type {
 export { jwtMiddleware } from "https://denopkg.com/halvardssm/oak-middleware-jwt@master/mod.ts";
 export type { OnSuccessHandler } from "https://denopkg.com/halvardssm/oak-middleware-jwt@master/mod.ts";
 // Oak json error
-export { jsonErrorMiddleware } from "https://denopkg.com/so1ve/oak-json-error@main/mod.ts";
+export { jsonErrorMiddleware } from "https://deno.land/x/oak_json_error@v1.2.0/mod.ts";
 // Oak cors
 export { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
+// Oak logger
+export { default as logger } from "https://deno.land/x/oak_logger@1.0.0/mod.ts";
 // Crypto
 export {
   argon2id,
@@ -38,6 +40,8 @@ export {
 // Std
 export * as colors from "https://deno.land/std@0.130.0/fmt/colors.ts";
 export { parse as parseFlags } from "https://deno.land/std@0.130.0/flags/mod.ts";
+// Log
+export * as log from "https://deno.land/std@0.147.0/log/mod.ts";
 // .env
 export { config as envConfig } from "https://deno.land/std@0.130.0/dotenv/mod.ts";
 // Dittorm

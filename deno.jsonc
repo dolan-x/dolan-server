@@ -22,7 +22,7 @@
         "./tests/",
         "./config.ts",
         "./deps.ts",
-        "./test_deps.ts",
+        "./deps.test.ts",
         "./deno.jsonc",
         "import_map.json"
       ]

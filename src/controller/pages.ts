@@ -1,23 +1,20 @@
-import { helpers, RouterMiddleware, Status } from "../../deps.ts";
+import { RouterMiddleware, Status } from "../../deps.ts";
 
 import { getStorage } from "../lib/mod.ts";
-import { cr, validateRequestBody } from "../utils/mod.ts";
+import { cr, ensureRequestBody, getQuery } from "../utils/mod.ts";
 
 const pagesStorage = getStorage("Pages");
 const configStorage = getStorage("Config");
 
 /**
- * GET /{VERSION}/pages
+ * GET /pages
  * Query: pageSize, page
  */
 export const getPages: RouterMiddleware<"/pages"> = async (ctx) => {
   const {
     pageSize: _paramPageSize,
     page: _paramPage = 0,
-  } = helpers.getQuery(
-    ctx,
-    { mergeParams: true },
-  );
+  } = getQuery(ctx);
   const paramPageSize = Number(_paramPageSize); // 每页页面数
   const { maxPageSize = 10 } =
     (await configStorage.select({ name: "posts" }))[0]; // 最大每页页面数
@@ -47,7 +44,7 @@ export const getPages: RouterMiddleware<"/pages"> = async (ctx) => {
   ctx.response.body = cr.success({ data: pages });
 };
 
-/** GET /{VERSION}/pages/{slug} */
+/** GET /pages/{slug} */
 export const getPage: RouterMiddleware<"/pages/:slug"> = async (ctx) => {
   const { slug } = ctx.params;
   const page = (await pagesStorage.select(
@@ -65,9 +62,9 @@ export const getPage: RouterMiddleware<"/pages/:slug"> = async (ctx) => {
   ctx.response.body = cr.success({ data: page });
 };
 
-/** POST /{VERSION}/pages */
+/** POST /pages */
 export const createPage: RouterMiddleware<"/pages"> = async (ctx) => {
-  const requestBody = await validateRequestBody(ctx);
+  const requestBody = await ensureRequestBody(ctx);
   const { // 默认值
     title = "",
     slug = title,
@@ -85,9 +82,9 @@ export const createPage: RouterMiddleware<"/pages"> = async (ctx) => {
   });
 };
 
-/** PUT /{VERSION}/pages/{slug} */
+/** PUT /pages/{slug} */
 export const updatePage: RouterMiddleware<"/pages/:slug"> = async (ctx) => {
-  const requestBody = await validateRequestBody(ctx);
+  const requestBody = await ensureRequestBody(ctx);
   const { slug } = ctx.params;
   const exists = (await pagesStorage.select({ slug }))[0];
   if (!exists) {
@@ -104,7 +101,7 @@ export const updatePage: RouterMiddleware<"/pages/:slug"> = async (ctx) => {
   ctx.response.body = cr.success({ data: resp });
 };
 
-/** DELETE /{VERSION}/pages/{slug} */
+/** DELETE /pages/{slug} */
 export const deletePage: RouterMiddleware<"/pages/:slug"> = async (ctx) => {
   const { slug } = ctx.params;
   const exists = (await pagesStorage.select({ slug }))[0];

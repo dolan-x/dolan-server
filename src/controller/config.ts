@@ -1,11 +1,11 @@
 import { RouterMiddleware, Status } from "../../deps.ts";
 
 import { getStorage } from "../lib/mod.ts";
-import { CLOUD_CONFIG_NAMES, cr, validateRequestBody } from "../utils/mod.ts";
+import { CLOUD_CONFIG_NAMES, cr, ensureRequestBody } from "../utils/mod.ts";
 
 const storage = getStorage("Config");
 
-/** GET /{VERSION}/config/{name} */
+/** GET /config/{name} */
 export const getConfig: RouterMiddleware<"/config/:name"> = async (ctx) => {
   const { name } = ctx.params;
   const config = (await storage.select(
@@ -26,14 +26,14 @@ export const getConfig: RouterMiddleware<"/config/:name"> = async (ctx) => {
 
 // 没有新建的操作，新建应当在初始化时完成
 
-/** PUT /{VERSION}/config/{name} */
+/** PUT /config/{name} */
 export const updateConfig: RouterMiddleware<"/config/:name"> = async (ctx) => {
   const { name } = ctx.params;
   if (!CLOUD_CONFIG_NAMES.includes(name)) {
     ctx.throw(Status.BadRequest, `Config(Name: ${name}) is invalid`);
     return;
   }
-  const requestBody = await validateRequestBody(ctx);
+  const requestBody = await ensureRequestBody(ctx);
   const result = await storage.update(
     { name, value: requestBody },
     { name },

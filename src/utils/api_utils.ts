@@ -1,4 +1,4 @@
-import { Context, Status } from "../../deps.ts";
+import { Context, helpers, Status } from "../../deps.ts";
 
 export const createSitemapUrls = <T extends { slug: string }>(
   objs: T[],
@@ -11,10 +11,10 @@ export const createSitemapUrls = <T extends { slug: string }>(
 `
   ).join("");
 
-export const validateRequestBody = async <
+export async function ensureRequestBody<
   // deno-lint-ignore no-explicit-any
   T = any,
->(ctx: Context) => {
+>(ctx: Context) {
   if (!ctx.request.hasBody) {
     ctx.throw(Status.BadRequest, "Request body is missing");
   }
@@ -26,4 +26,11 @@ export const validateRequestBody = async <
     requestBody = {} as any;
   }
   return requestBody;
-};
+}
+
+export function getQuery(ctx: Context) {
+  return helpers.getQuery(
+    ctx,
+    { mergeParams: true },
+  );
+}

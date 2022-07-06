@@ -1,5 +1,5 @@
 // Copyright 2022 the Dolan authors. All rights reserved. MIT license.
-import { Application, colors, oakCors, parseFlags } from "../deps.ts";
+import { Application, colors, logger, oakCors, parseFlags } from "../deps.ts";
 import { unprotectedRouter } from "./unprotected_routes.ts";
 import { protectedRouter } from "./protected_routes.ts";
 import { errorHandler } from "./middleware/mod.ts";
@@ -15,6 +15,8 @@ const PORT = parsedArgs.p || parsedArgs.port || 4000;
 
 app.use(errorHandler);
 app.use(oakCors());
+app.use(logger.logger)
+  .use(logger.responseTime);
 app.use(unprotectedRouter.routes())
   .use(unprotectedRouter.allowedMethods({ throw: true }));
 app.use(protectedRouter.routes())

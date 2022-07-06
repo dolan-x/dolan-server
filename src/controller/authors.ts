@@ -1,13 +1,13 @@
 import { helpers, RouterMiddleware, shared, Status } from "../../deps.ts";
 
 import { getStorage } from "../lib/mod.ts";
-import { cr, validateRequestBody } from "../utils/mod.ts";
+import { cr, ensureRequestBody } from "../utils/mod.ts";
 
 const authorsStorage = getStorage("Authors");
 const postsStorage = getStorage("Posts");
 const configStorage = getStorage("Config");
 
-/** GET /{VERSION}/authors */
+/** GET /authors */
 export const getAuthors: RouterMiddleware<"/authors"> = async (ctx) => {
   const {
     pageSize: _paramPageSize,
@@ -40,7 +40,7 @@ export const getAuthors: RouterMiddleware<"/authors"> = async (ctx) => {
   ctx.response.body = cr.success({ data: authors });
 };
 
-/** GET /{VERSION}/authors/{slug} */
+/** GET /authors/{slug} */
 export const getAuthor: RouterMiddleware<"/authors/:slug"> = async (ctx) => {
   const { slug } = ctx.params;
   const author = (await authorsStorage.select(
@@ -62,7 +62,7 @@ export const getAuthor: RouterMiddleware<"/authors/:slug"> = async (ctx) => {
   ctx.response.body = cr.success({ data: author });
 };
 
-/** GET /{VERSION}/authors/{slug}/posts */
+/** GET /authors/{slug}/posts */
 export const getAuthorPosts: RouterMiddleware<"/authors/:slug/posts"> = async (
   ctx,
 ) => {
@@ -94,9 +94,9 @@ export const getAuthorPosts: RouterMiddleware<"/authors/:slug/posts"> = async (
   ctx.response.body = cr.success({ data: postsIncludeThisAuthor });
 };
 
-/** POST /{VERSION}/authors */
+/** POST /authors */
 export const createAuthor: RouterMiddleware<"/authors"> = async (ctx) => {
-  const requestBody = await validateRequestBody(ctx);
+  const requestBody = await ensureRequestBody(ctx);
 
   const { // 默认值
     name = "",
@@ -115,9 +115,9 @@ export const createAuthor: RouterMiddleware<"/authors"> = async (ctx) => {
   });
 };
 
-/** PUT /{VERSION}/authors/{slug} */
+/** PUT /authors/{slug} */
 export const updateAuthor: RouterMiddleware<"/authors/:slug"> = async (ctx) => {
-  const requestBody = await validateRequestBody(ctx);
+  const requestBody = await ensureRequestBody(ctx);
   const { slug } = ctx.params;
   const exists = (await authorsStorage.select({ slug }))[0];
   if (!exists) {
@@ -134,7 +134,7 @@ export const updateAuthor: RouterMiddleware<"/authors/:slug"> = async (ctx) => {
   ctx.response.body = cr.success({ data: resp });
 };
 
-/** DELETE /{VERSION}/authors/{slug} */
+/** DELETE /authors/{slug} */
 export const deleteAuthor: RouterMiddleware<"/authors/:slug"> = async (ctx) => {
   const { slug } = ctx.params;
   const exists = (await authorsStorage.select({ slug }))[0];
