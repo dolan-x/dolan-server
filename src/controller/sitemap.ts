@@ -1,7 +1,7 @@
 import { log, RouterMiddleware, shared } from "../../deps.ts";
 
 import { getStorage } from "../lib/mod.ts";
-import { createSitemapUrls, prettyJSON } from "../utils/mod.ts";
+import { createSitemapUrls } from "../utils/mod.ts";
 
 const postsStorage = getStorage("Posts");
 const tagsStorage = getStorage("Tags");

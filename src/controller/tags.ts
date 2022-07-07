@@ -1,4 +1,4 @@
-import { log, RouterMiddleware, shared, Status } from "../../deps.ts";
+import { log, RouterMiddleware, shared, Status, uniqolor } from "../../deps.ts";
 
 import { getStorage } from "../lib/mod.ts";
 import { cr, ensureRequestBody, getQuery, prettyJSON } from "../utils/mod.ts";
@@ -41,9 +41,9 @@ export const getTags: RouterMiddleware<"/tags"> = async (ctx) => {
       ],
     },
   );
-  log.info(
-    "Tags: Getting tags - tags " + prettyJSON(tags),
-  );
+  // log.info(
+  //   "Tags: Getting tags - tags " + prettyJSON(tags),
+  // );
   ctx.response.body = cr.success({ data: tags });
   log.info("Tags: Getting tags - success");
 };
@@ -63,9 +63,9 @@ export const getTag: RouterMiddleware<"/tags/:slug"> = async (ctx) => {
       ],
     },
   ))[0]; // Select返回的是一个列表，预期只会有一个返回数据
-  log.info(
-    "Tags: Getting tags - tag " + prettyJSON(tag),
-  );
+  // log.info(
+  //   "Tags: Getting tags - tag " + prettyJSON(tag),
+  // );
   if (!tag) {
     log.error(`Tags: Getting tag - Tag(Slug: ${slug}) does not exist`);
     ctx.throw(Status.NotFound, `Tag(Slug: ${slug}) does not exist`);
@@ -110,7 +110,7 @@ export const createTag: RouterMiddleware<"/tags"> = async (ctx) => {
     name = "",
     slug = name,
     description = "",
-    color = "",
+    color = uniqolor(slug),
   } = requestBody;
   if (slug === "") {
     log.error(`Tags: Creating tag - Slug or Name is required`);

@@ -43,9 +43,9 @@ export const getCategories: RouterMiddleware<"/categories"> = async (ctx) => {
       ],
     },
   );
-  log.info(
-    "Categories: Getting categories - categories " + prettyJSON(categories),
-  );
+  // log.info(
+  //   "Categories: Getting categories - categories " + prettyJSON(categories),
+  // );
   ctx.response.body = cr.success({ data: categories });
   log.info("Categories: Getting categories - success ");
 };
@@ -67,9 +67,9 @@ export const getCategory: RouterMiddleware<"/categories/:slug"> = async (
       ],
     },
   ))[0]; // Select返回的是一个列表，预期只会有一个返回数据
-  log.info(
-    "Categories: Getting categories - category " + prettyJSON(category),
-  );
+  // log.info(
+  //   "Categories: Getting categories - category " + prettyJSON(category),
+  // );
   if (!category) {
     log.error(
       `Categories: Getting categories - Category(Slug: ${slug}) does not exist`,

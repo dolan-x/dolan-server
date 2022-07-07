@@ -37,6 +37,8 @@ export {
   getNumericDate,
   verify as verifyJwt,
 } from "https://deno.land/x/djwt@v2.4/mod.ts";
+// Uniqolor
+export { default as uniqolor } from "https://esm.sh/uniqolor@1.0.2";
 // Std
 export * as colors from "https://deno.land/std@0.130.0/fmt/colors.ts";
 export { parse as parseFlags } from "https://deno.land/std@0.130.0/flags/mod.ts";

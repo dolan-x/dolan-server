@@ -66,9 +66,9 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
     ),
     postsStorage.count(where),
   ]);
-  log.info(
-    "Posts: Getting posts - posts " + prettyJSON(posts),
-  );
+  // log.info(
+  //   "Posts: Getting posts - posts " + prettyJSON(posts),
+  // );
   log.info(
     "Posts: Getting posts - count " + prettyJSON(postCount),
   );
@@ -105,9 +105,9 @@ export const getPost: RouterMiddleware<"/posts/:slug"> = async (ctx) => {
       ],
     },
   ))[0]; // Select返回的是一个列表，预期只会有一个返回数据
-  log.info(
-    "Posts: Getting posts - post " + prettyJSON(post),
-  );
+  // log.info(
+  //   "Posts: Getting posts - post " + prettyJSON(post),
+  // );
   if (!post) {
     log.error(`Posts: Getting post - Post(Slug: ${slug}) does not exist`);
     ctx.throw(Status.NotFound, `Post(Slug: ${slug}) does not exist`);
