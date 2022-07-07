@@ -38,6 +38,7 @@ export const getTags: RouterMiddleware<"/tags"> = async (ctx) => {
         "slug",
         "name",
         "description",
+        "color",
       ],
     },
   );
@@ -60,6 +61,7 @@ export const getTag: RouterMiddleware<"/tags/:slug"> = async (ctx) => {
         "slug",
         "name",
         "description",
+        "color",
       ],
     },
   ))[0]; // Select返回的是一个列表，预期只会有一个返回数据
@@ -105,13 +107,21 @@ export const getTagCount: RouterMiddleware<"/tags/:slug/count"> = async (
 export const createTag: RouterMiddleware<"/tags"> = async (ctx) => {
   log.info("Tags: Creating tag");
   const requestBody = await ensureRequestBody(ctx);
-  log.info("Tags: Creating tag - body " + prettyJSON(requestBody));
+
   const { // 默认值
     name = "",
-    slug = name,
     description = "",
-    color = uniqolor(slug),
   } = requestBody;
+  const slug = requestBody.slug || name;
+  const color = requestBody.color || uniqolor(slug).color;
+  log.info(
+    "Tags: Creating tag - body " + prettyJSON({
+      name,
+      slug,
+      description,
+      color,
+    }),
+  );
   if (slug === "") {
     log.error(`Tags: Creating tag - Slug or Name is required`);
     ctx.throw(Status.BadRequest, `Slug or Name is required`);
