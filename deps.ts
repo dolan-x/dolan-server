@@ -42,8 +42,6 @@ export { default as uniqolor } from "https://esm.sh/uniqolor@1.0.2";
 // Std
 export * as colors from "https://deno.land/std@0.130.0/fmt/colors.ts";
 export { parse as parseFlags } from "https://deno.land/std@0.130.0/flags/mod.ts";
-// TODO(@so1ve): replace this
-export { existsSync } from "https://deno.land/std@0.130.0/fs/mod.ts";
 // Log
 export * as log from "https://deno.land/std@0.147.0/log/mod.ts";
 // .env
