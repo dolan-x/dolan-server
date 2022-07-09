@@ -1,3 +1,10 @@
+export const jwtKey = await crypto.subtle.generateKey(
+  { name: "HMAC", hash: "SHA-512" },
+  true,
+  ["sign", "verify"],
+);
+
+/*
 import { prepareLocalFile } from "../../deps.ts";
 
 // Workaround timonson/djwt#73
@@ -24,3 +31,4 @@ export const jwtKey = await crypto.subtle.generateKey(
   true,
   ["sign", "verify"],
 );
+*/
