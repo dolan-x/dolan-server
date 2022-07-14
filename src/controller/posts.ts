@@ -17,6 +17,8 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
     pageSize: _paramPageSize,
     page: _paramPage = 0,
     desc = "updated",
+    // TODO(@so1ve): Return all posts if logged in and ?all passed
+    all,
   } = getQuery(ctx);
   const paramPageSize = Number(_paramPageSize); // 每页文章数
   const { maxPageSize = 10 } =
@@ -30,6 +32,7 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
       maxPageSize,
       pageSize,
       page,
+      all,
     }),
   );
   // deno-lint-ignore no-explicit-any
@@ -140,10 +143,10 @@ export const createPost: RouterMiddleware<"/posts"> = async (ctx) => {
     ctx.throw(Status.BadRequest, "Slug is required");
     return;
   }
-  const dupelicate = await postsStorage.select({
+  const duplicate = await postsStorage.select({
     slug,
   });
-  if (dupelicate.length) {
+  if (duplicate.length) {
     log.error(`Posts: Creating post - Post(Slug: ${slug}) already exists`);
     ctx.throw(Status.Conflict, `Post(Slug: ${slug}) already exists`);
   }
