@@ -1,4 +1,5 @@
 import { Context, helpers, Status } from "../../deps.ts";
+import { getStorage } from "../lib/mod.ts";
 
 export const createSitemapUrls = <T extends { slug: string }>(
   objs: T[],
@@ -33,4 +34,21 @@ export function getQuery(ctx: Context) {
     ctx,
     { mergeParams: true },
   );
+}
+
+const configStorage = getStorage("Config");
+export async function getConfig(name: string) {
+  const configObj = (await configStorage.select({ name }))[0];
+  return configObj.value;
+}
+
+export function getPageSize(maxPageSize: number, paramPageSize: number) {
+  return paramPageSize
+    ? (paramPageSize >= maxPageSize ? maxPageSize : paramPageSize)
+    : maxPageSize;
+}
+
+// deno-lint-ignore no-explicit-any
+export function getLimit(ctx: Context, all: any, pageSize: number) {
+  return (ctx.state.userInfo && all !== undefined) ? undefined : pageSize;
 }

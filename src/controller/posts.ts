@@ -1,10 +1,16 @@
 import { log, RouterMiddleware, Status } from "../../deps.ts";
 
 import { getStorage } from "../lib/mod.ts";
-import { cr, ensureRequestBody, getQuery, prettyJSON } from "../utils/mod.ts";
+import {
+  cr,
+  ensureRequestBody,
+  getConfig,
+  getPageSize,
+  getQuery,
+  prettyJSON,
+} from "../utils/mod.ts";
 
 const postsStorage = getStorage("Posts");
-const configStorage = getStorage("Config");
 
 // TODO(@so1ve): 携带有合法JWT Token且query: draft=true时，返回内容包括草稿箱的文章
 /**
@@ -21,11 +27,8 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
     all,
   } = getQuery(ctx);
   const paramPageSize = Number(_paramPageSize); // 每页文章数
-  const { maxPageSize = 10 } =
-    (await configStorage.select({ name: "posts" }))[0]; // 最大每页文章数
-  const pageSize: number = paramPageSize // 最终每页文章数
-    ? (paramPageSize >= maxPageSize ? maxPageSize : paramPageSize)
-    : maxPageSize;
+  const { maxPageSize = 10 } = await getConfig("posts"); // 最大每页文章数
+  const pageSize = getPageSize(maxPageSize, paramPageSize); // 最终每页文章数
   const page = Number(_paramPage); // 当前页数
   log.info(
     "Posts: Getting posts - info " + prettyJSON({

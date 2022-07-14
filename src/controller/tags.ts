@@ -1,11 +1,18 @@
 import { log, RouterMiddleware, shared, Status, uniqolor } from "../../deps.ts";
 
 import { getStorage } from "../lib/mod.ts";
-import { cr, ensureRequestBody, getQuery, prettyJSON } from "../utils/mod.ts";
+import {
+  cr,
+  ensureRequestBody,
+  getConfig,
+  getLimit,
+  getPageSize,
+  getQuery,
+  prettyJSON,
+} from "../utils/mod.ts";
 
 const tagsStorage = getStorage("Tags");
 const postsStorage = getStorage("Posts");
-const configStorage = getStorage("Config");
 
 /** GET /tags */
 export const getTags: RouterMiddleware<"/tags"> = async (ctx) => {
@@ -13,14 +20,13 @@ export const getTags: RouterMiddleware<"/tags"> = async (ctx) => {
   const {
     pageSize: _paramPageSize,
     page: _paramPage = 0,
+    all,
   } = getQuery(ctx);
   const paramPageSize = Number(_paramPageSize); // 每页标签数
-  const { maxPageSize = 10 } =
-    (await configStorage.select({ name: "tags" }))[0]; // 最大每页标签数
-  const pageSize = paramPageSize // 最终每页标签数
-    ? (paramPageSize >= maxPageSize ? maxPageSize : paramPageSize)
-    : maxPageSize;
+  const { maxPageSize = 10 } = await getConfig("tags"); // 最大每页标签数
+  const pageSize = getPageSize(maxPageSize, paramPageSize); // 最终每页标签数
   const page = Number(_paramPage); // 当前页数
+  const limit = getLimit(ctx, all, pageSize);
   log.info(
     "Tags: Getting tags - info " + prettyJSON({
       maxPageSize,
@@ -32,7 +38,7 @@ export const getTags: RouterMiddleware<"/tags"> = async (ctx) => {
     {},
     {
       desc: "updated", // 避免与Leancloud的字段冲突
-      limit: pageSize,
+      limit,
       offset: Math.max((page - 1) * pageSize, 0),
       fields: [
         "slug",

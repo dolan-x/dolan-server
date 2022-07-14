@@ -2,11 +2,17 @@
 import { log, RouterMiddleware, shared, Status } from "../../deps.ts";
 
 import { getStorage } from "../lib/mod.ts";
-import { cr, ensureRequestBody, getQuery, prettyJSON } from "../utils/mod.ts";
+import {
+  cr,
+  ensureRequestBody,
+  getConfig,
+  getPageSize,
+  getQuery,
+  prettyJSON,
+} from "../utils/mod.ts";
 
 const categoriesStorage = getStorage("Categories");
 const postsStorage = getStorage("Posts");
-const configStorage = getStorage("Config");
 
 /** GET /categories */
 export const getCategories: RouterMiddleware<"/categories"> = async (ctx) => {
@@ -14,15 +20,15 @@ export const getCategories: RouterMiddleware<"/categories"> = async (ctx) => {
   const {
     pageSize: _paramPageSize,
     page: _paramPage = 0,
+    all,
   } = getQuery(ctx);
   const paramPageSize = Number(_paramPageSize); // 每页分类数
-  const { maxPageSize = 10 } = (await configStorage.select({
-    name: "categories",
-  }))[0]; // 最大每页分类数
-  const pageSize = paramPageSize // 最终每页分类数
-    ? (paramPageSize >= maxPageSize ? maxPageSize : paramPageSize)
-    : maxPageSize;
+  const { maxPageSize = 10 } = await getConfig("categories"); // 最大每页分类数
+  const pageSize = getPageSize(maxPageSize, paramPageSize); // 最终每页分类数
   const page = Number(_paramPage); // 当前页数
+  const limit = (ctx.state.userInfo && all !== undefined)
+    ? undefined
+    : pageSize;
   log.info(
     "Categories: Getting categories - info " + prettyJSON({
       maxPageSize,
@@ -34,7 +40,7 @@ export const getCategories: RouterMiddleware<"/categories"> = async (ctx) => {
     {},
     {
       desc: "updated", // 避免与Leancloud的字段冲突
-      limit: pageSize,
+      limit,
       offset: Math.max((page - 1) * pageSize, 0),
       fields: [
         "slug",

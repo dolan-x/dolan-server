@@ -1,11 +1,10 @@
 import { helpers, RouterMiddleware, shared, Status } from "../../deps.ts";
 
 import { getStorage } from "../lib/mod.ts";
-import { cr, ensureRequestBody } from "../utils/mod.ts";
+import { cr, ensureRequestBody, getConfig, getPageSize } from "../utils/mod.ts";
 
 const authorsStorage = getStorage("Authors");
 const postsStorage = getStorage("Posts");
-const configStorage = getStorage("Config");
 
 /** GET /authors */
 export const getAuthors: RouterMiddleware<"/authors"> = async (ctx) => {
@@ -17,11 +16,8 @@ export const getAuthors: RouterMiddleware<"/authors"> = async (ctx) => {
     { mergeParams: true },
   );
   const paramPageSize = Number(_paramPageSize); // 每页作者数
-  const { maxPageSize = 10 } =
-    (await configStorage.select({ name: "authors" }))[0]; // 最大每页作者数
-  const pageSize = paramPageSize // 最终每页作者数
-    ? (paramPageSize >= maxPageSize ? maxPageSize : paramPageSize)
-    : maxPageSize;
+  const { maxPageSize = 10 } = await getConfig("authors"); // 最大每页作者数
+  const pageSize = getPageSize(maxPageSize, paramPageSize); // 最终每页作者数
   const page = Number(_paramPage); // 当前页数
   const authors = await authorsStorage.select(
     {},

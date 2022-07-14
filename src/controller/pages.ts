@@ -1,10 +1,16 @@
 import { log, RouterMiddleware, Status } from "../../deps.ts";
 
 import { getStorage } from "../lib/mod.ts";
-import { cr, ensureRequestBody, getQuery, prettyJSON } from "../utils/mod.ts";
+import {
+  cr,
+  ensureRequestBody,
+  getConfig,
+  getPageSize,
+  getQuery,
+  prettyJSON,
+} from "../utils/mod.ts";
 
 const pagesStorage = getStorage("Pages");
-const configStorage = getStorage("Config");
 
 /**
  * GET /pages
@@ -17,11 +23,8 @@ export const getPages: RouterMiddleware<"/pages"> = async (ctx) => {
     page: _paramPage = 0,
   } = getQuery(ctx);
   const paramPageSize = Number(_paramPageSize); // 每页页面数
-  const { maxPageSize = 10 } =
-    (await configStorage.select({ name: "pages" }))[0]; // 最大每页页面数
-  const pageSize = paramPageSize // 最终每页页面章数
-    ? (paramPageSize >= maxPageSize ? maxPageSize : paramPageSize)
-    : maxPageSize;
+  const { maxPageSize = 10 } = await getConfig("pages"); // 最大每页页面数
+  const pageSize = getPageSize(maxPageSize, paramPageSize); // 最终每页页面章数
   const page = Number(_paramPage); // 当前页数
   log.info(
     "Pages: Getting pages - info " + prettyJSON({

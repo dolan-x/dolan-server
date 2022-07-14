@@ -1,12 +1,11 @@
 import { log, RouterMiddleware, shared } from "../../deps.ts";
 
 import { getStorage } from "../lib/mod.ts";
-import { createSitemapUrls } from "../utils/mod.ts";
+import { createSitemapUrls, getConfig } from "../utils/mod.ts";
 
 const postsStorage = getStorage("Posts");
 const tagsStorage = getStorage("Tags");
 const categoriesStorage = getStorage("Categories");
-const configStorage = getStorage("Config");
 
 /**
  * GET /sitemap
@@ -33,11 +32,9 @@ export const generateSitemap: RouterMiddleware<"/sitemap"> = async (ctx) => {
         fields: ["id"],
       },
     ) as Promise<shared.Category[]>,
-    configStorage.select(
-      { name: "functions" },
-    ),
+    getConfig("functions"),
   ]);
-  const { postsBaseUrl, tagsBaseUrl, categoriesBaseUrl } = config[0].sitemap;
+  const { postsBaseUrl, tagsBaseUrl, categoriesBaseUrl } = config.sitemap;
   // deno-fmt-ignore
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
