@@ -114,7 +114,7 @@ export const loginUser: RouterMiddleware<"/users/login"> = async (ctx) => {
         { alg: "HS512", typ: "JWT" },
         {
           username: user.username,
-          exp: getNumericDate(2 * 60 * 60),
+          exp: getNumericDate(12 * 60 * 60), // 12 Hours
         },
         jwtKey,
       ),

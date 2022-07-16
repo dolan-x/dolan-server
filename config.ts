@@ -5,6 +5,7 @@ try {
 } catch { /* Make linter happy */ }
 const e = (key: string) => Deno.env.get(key);
 type Config = {
+  jwtKey: string;
   storageType: SupportedStorages;
   leanAppId?: string;
   leanAppKey?: string;
@@ -13,6 +14,7 @@ type Config = {
   detaProjectKey?: string;
 };
 const config: Config = {
+  jwtKey: e("JWT_KEY")!,
   storageType: e("STORAGE_TYPE") as SupportedStorages,
   leanAppId: e("LEAN_APP_ID"),
   leanAppKey: e("LEAN_APP_KEY"),
