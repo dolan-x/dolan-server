@@ -17,19 +17,19 @@ export const generateSitemap: RouterMiddleware<"/sitemap"> = async (ctx) => {
     postsStorage.select(
       { status: ["!=", "draft"] },
       {
-        fields: ["id"],
+        fields: ["slug"],
       },
     ) as Promise<shared.Post[]>,
     tagsStorage.select(
       {},
       {
-        fields: ["id"],
+        fields: ["slug"],
       },
     ) as Promise<shared.Tag[]>,
     categoriesStorage.select(
       {},
       {
-        fields: ["id"],
+        fields: ["slug"],
       },
     ) as Promise<shared.Category[]>,
     getConfig("functions"),
