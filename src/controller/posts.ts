@@ -38,7 +38,7 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
       all,
     }),
   );
-  // deno-lint-ignore no-explicit-any
+
   const where: Record<string, any> = {};
   if (!ctx.state.userInfo) {
     where.status = ["!=", "draft"];

@@ -13,7 +13,6 @@ export const createSitemapUrls = <T extends { slug: string }>(
   ).join("");
 
 export async function ensureRequestBody<
-  // deno-lint-ignore no-explicit-any
   T = any,
 >(ctx: Context) {
   if (!ctx.request.hasBody) {
@@ -23,7 +22,6 @@ export async function ensureRequestBody<
   try {
     requestBody = await ctx.request.body({ type: "json" }).value;
   } catch {
-    // deno-lint-ignore no-explicit-any
     requestBody = {} as any;
   }
   return requestBody;
@@ -48,7 +46,6 @@ export function getPageSize(maxPageSize: number, paramPageSize: number) {
     : maxPageSize;
 }
 
-// deno-lint-ignore no-explicit-any
 export function getLimit(ctx: Context, all: any, pageSize: number) {
   return (ctx.state.userInfo && all !== undefined) ? undefined : pageSize;
 }

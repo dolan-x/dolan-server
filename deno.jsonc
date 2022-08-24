@@ -29,7 +29,8 @@
     },
     "rules": {
       "tags": ["recommended"],
-      "include": ["ban-untagged-todo"]
+      "include": ["ban-untagged-todo"],
+      "exclude": ["no-explicit-any"]
     }
   },
   "fmt": {

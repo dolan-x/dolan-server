@@ -33,7 +33,7 @@ export const getPages: RouterMiddleware<"/pages"> = async (ctx) => {
       page,
     }),
   );
-  // deno-lint-ignore no-explicit-any
+
   const where: Record<string, any> = {};
   if (!ctx.state.userInfo) {
     where.hidden = false;
