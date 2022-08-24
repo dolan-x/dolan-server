@@ -40,7 +40,6 @@ export const getTags: RouterMiddleware<"/tags"> = async (ctx) => {
   if (slugs) {
     where.slug = ["IN", slugs.split(",")];
   }
-  console.log(where);
   const tags = await tagsStorage.select(
     where,
     {
