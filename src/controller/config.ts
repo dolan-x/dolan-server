@@ -1,9 +1,31 @@
-import { RouterMiddleware, Status } from "../../deps.ts";
+import { RouterMiddleware, shared, Status } from "../../deps.ts";
 
 import { getStorage } from "../lib/mod.ts";
 import { CLOUD_CONFIG_NAMES, cr, ensureRequestBody } from "../utils/mod.ts";
 
 const storage = getStorage("Config");
+
+function processConfigs(configs: shared.Config[]) {
+  console.log(configs);
+  return configs.reduce((a, b) => ({
+    ...a,
+    [b.name]: b.value,
+  }), {} as any);
+}
+
+/** GET /config */
+export const getConfigs: RouterMiddleware<"/config"> = async (ctx) => {
+  const configs: shared.Config[] = (await storage.select(
+    {},
+    {
+      fields: [
+        "name",
+        "value",
+      ],
+    },
+  ));
+  ctx.response.body = cr.success({ data: processConfigs(configs) });
+};
 
 /** GET /config/{name} */
 export const getConfig: RouterMiddleware<"/config/:name"> = async (ctx) => {
