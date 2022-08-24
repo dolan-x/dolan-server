@@ -56,6 +56,9 @@ unprotectedRouter.get(`/pages`, pages.getPages);
 // Post detail
 unprotectedRouter.get(`/pages/:slug`, pages.getPage);
 
+// Config list
+unprotectedRouter.get("/config", config.getConfigs);
+
 // Config detail
 unprotectedRouter.get("/config/:name", config.getConfig);
 
