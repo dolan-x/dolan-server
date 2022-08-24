@@ -21,6 +21,7 @@ export const getTags: RouterMiddleware<"/tags"> = async (ctx) => {
     pageSize: _paramPageSize,
     page: _paramPage = 0,
     all,
+    slugs,
   } = getQuery(ctx);
   const paramPageSize = Number(_paramPageSize); // 每页标签数
   const { maxPageSize = 10 } = await getConfig("tags"); // 最大每页标签数
@@ -32,10 +33,16 @@ export const getTags: RouterMiddleware<"/tags"> = async (ctx) => {
       maxPageSize,
       pageSize,
       page,
+      slugs,
     }),
   );
+  const where = {} as Record<string, any>;
+  if (slugs) {
+    where.slug = ["IN", slugs.split(",")];
+  }
+  console.log(where);
   const tags = await tagsStorage.select(
-    {},
+    where,
     {
       desc: "updated", // 避免与Leancloud的字段冲突
       limit,
