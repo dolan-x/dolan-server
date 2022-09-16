@@ -1,3 +1,4 @@
+import { Post } from "https://esm.sh/v87/@dolan-x/shared@0.0.19/dist/index.d.ts";
 import { log, RouterMiddleware, Status } from "../../deps.ts";
 
 import { getStorage } from "../lib/mod.ts";
@@ -40,7 +41,7 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
   );
 
   const where: Record<string, any> = {};
-  if (!ctx.state.userInfo) {
+  if (!ctx.state.userInfo && !all) {
     where.status = ["!=", "draft"];
     where.hidden = false;
   }
@@ -69,7 +70,7 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
           "updated",
         ],
       },
-    ),
+    ) as Promise<Post[]>,
     postsStorage.count(where),
   ]);
   // log.info(
@@ -79,7 +80,10 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
     "Posts: Getting posts - count " + prettyJSON(postCount),
   );
   ctx.response.body = cr.success({
-    data: posts,
+    data: [
+      ...posts.filter((p) => p.sticky),
+      ...posts.filter((p) => !p.sticky),
+    ],
     metas: {
       pages: Math.ceil(postCount / pageSize),
     },
