@@ -1,6 +1,5 @@
 import * as log from "$log";
 import { RouterMiddleware, Status } from "oak";
-import { md5 } from "hash-wasm";
 import { create as createJwt, getNumericDate } from "djwt";
 
 import { getStorage, jwtKey } from "../lib/mod.ts";
@@ -9,6 +8,7 @@ import {
   argon2Verify,
   cr,
   ensureRequestBody,
+  md5,
   prettyJSON,
 } from "../utils/mod.ts";
 

@@ -5,7 +5,7 @@
     "start-watch": "deno run -A --watch --unstable src/server.ts",
     "test": "deno test -A --unstable"
   },
-  "import_map": "./import_map.json",
+  "importMap": "import_map.json",
   "compilerOptions": {
     "lib": [
       "deno.ns",
