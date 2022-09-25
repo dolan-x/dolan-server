@@ -68,6 +68,7 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
           "metas",
           "created",
           "updated",
+          "hidden",
         ],
       },
     ) as Promise<Post[]>,
@@ -112,6 +113,7 @@ export const getPost: RouterMiddleware<"/posts/:slug"> = async (ctx) => {
         "metas",
         "created",
         "updated",
+        "hidden",
       ],
     },
   ))[0]; // Select返回的是一个列表，预期只会有一个返回数据
