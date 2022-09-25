@@ -1,4 +1,5 @@
-import { RouterMiddleware, shared, Status } from "../../deps.ts";
+import { Post } from "@dolan-x/shared";
+import { RouterMiddleware, Status } from "oak";
 
 import { getStorage, initValues } from "../lib/mod.ts";
 import { cr } from "../utils/mod.ts";
@@ -18,7 +19,7 @@ export const init: RouterMiddleware<"/init"> = async (ctx) => {
     return;
   }
 
-  await postsStorage.add<shared.Post>({
+  await postsStorage.add<Post>({
     slug: "hello-world",
     title: "Hello World",
     content: "# Hello World\nYour first post!",

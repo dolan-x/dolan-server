@@ -1,4 +1,5 @@
-import { envConfig, SupportedStorages } from "./deps.ts";
+import { config as envConfig } from "$dotenv";
+import { SupportedStorages } from "dittorm";
 
 try {
   await envConfig({ export: true });

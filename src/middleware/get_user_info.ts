@@ -1,4 +1,5 @@
-import { RouterMiddleware, verifyJwt } from "../../deps.ts";
+import { RouterMiddleware } from "oak";
+import { verify as verifyJwt } from "djwt";
 
 import { jwtKey } from "../lib/mod.ts";
 

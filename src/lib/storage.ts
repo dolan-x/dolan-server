@@ -1,4 +1,4 @@
-import { ConfigMapping, dittorm } from "../../deps.ts";
+import { ConfigMapping, dittorm } from "dittorm";
 import { config } from "../../config.ts";
 
 const configMapping = {

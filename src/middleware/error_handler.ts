@@ -1,9 +1,6 @@
-import {
-  jsonErrorMiddleware,
-  log,
-  Middleware,
-  STATUS_TEXT,
-} from "../../deps.ts";
+import { Middleware, STATUS_TEXT } from "oak";
+import * as log from "$log";
+import { jsonErrorMiddleware } from "oak-json-error";
 
 import { cr } from "../utils/mod.ts";
 

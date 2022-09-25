@@ -1,8 +1,5 @@
-import {
-  jwtMiddleware,
-  OnSuccessHandler,
-  RouterMiddleware,
-} from "../../deps.ts";
+import { RouterMiddleware } from "oak";
+import { jwtMiddleware, OnSuccessHandler } from "oak-middleware-jwt";
 import { jwtKey } from "../lib/mod.ts";
 
 const onSuccess: OnSuccessHandler = (ctx, jwtPayload) => {

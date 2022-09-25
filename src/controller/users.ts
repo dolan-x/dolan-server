@@ -1,11 +1,7 @@
-import {
-  createJwt,
-  getNumericDate,
-  log,
-  md5,
-  RouterMiddleware,
-  Status,
-} from "../../deps.ts";
+import * as log from "$log";
+import { RouterMiddleware, Status } from "oak";
+import { md5 } from "hash-wasm";
+import { create as createJwt, getNumericDate } from "djwt";
 
 import { getStorage, jwtKey } from "../lib/mod.ts";
 import {

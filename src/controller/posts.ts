@@ -1,5 +1,6 @@
-import { Post } from "https://esm.sh/v87/@dolan-x/shared@0.0.19/dist/index.d.ts";
-import { log, RouterMiddleware, Status } from "../../deps.ts";
+import { Post } from "@dolan-x/shared";
+import * as log from "$log";
+import { RouterMiddleware, Status } from "oak";
 
 import { getStorage } from "../lib/mod.ts";
 import {

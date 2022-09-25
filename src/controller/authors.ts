@@ -1,7 +1,14 @@
-import { helpers, RouterMiddleware, shared, Status } from "../../deps.ts";
+import { Post } from "@dolan-x/shared";
+import { RouterMiddleware, Status } from "oak";
 
 import { getStorage } from "../lib/mod.ts";
-import { cr, ensureRequestBody, getConfig, getPageSize } from "../utils/mod.ts";
+import {
+  cr,
+  ensureRequestBody,
+  getConfig,
+  getPageSize,
+  getQuery,
+} from "../utils/mod.ts";
 
 const authorsStorage = getStorage("Authors");
 const postsStorage = getStorage("Posts");
@@ -11,10 +18,7 @@ export const getAuthors: RouterMiddleware<"/authors"> = async (ctx) => {
   const {
     pageSize: _paramPageSize,
     page: _paramPage = 0,
-  } = helpers.getQuery(
-    ctx,
-    { mergeParams: true },
-  );
+  } = getQuery(ctx);
   const paramPageSize = Number(_paramPageSize); // 每页作者数
   const { maxPageSize = 10 } = await getConfig("authors"); // 最大每页作者数
   const pageSize = getPageSize(maxPageSize, paramPageSize); // 最终每页作者数
@@ -63,7 +67,7 @@ export const getAuthorPosts: RouterMiddleware<"/authors/:slug/posts"> = async (
   ctx,
 ) => {
   const { slug } = ctx.params;
-  const allPosts: readonly shared.Post[] = Object.freeze( // TODO(@so1ve): 有没有高效点的实现啊喂！！
+  const allPosts = Object.freeze<Post>( // TODO(@so1ve): 有没有高效点的实现啊喂！！
     await postsStorage.select(
       {},
       {

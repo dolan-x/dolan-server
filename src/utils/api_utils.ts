@@ -1,4 +1,4 @@
-import { Context, helpers, Status } from "../../deps.ts";
+import { Context, helpers, Status } from "oak";
 import { getStorage } from "../lib/mod.ts";
 
 export const createSitemapUrls = <T extends { slug: string }>(

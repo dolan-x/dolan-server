@@ -1,5 +1,7 @@
 // TODO(@so1ve): 增加子分类功能
-import { log, RouterMiddleware, shared, Status } from "../../deps.ts";
+import * as log from "$log";
+import { Post } from "@dolan-x/shared";
+import { RouterMiddleware, Status } from "oak";
 
 import { getStorage } from "../lib/mod.ts";
 import {
@@ -92,7 +94,7 @@ export const getCategoryCount: RouterMiddleware<"/categories/:slug/count"> =
   async (ctx) => {
     const { slug } = ctx.params;
     log.info("Categories: Getting category count - " + slug);
-    const allPosts: readonly shared.Post[] = Object.freeze( // TODO(@so1ve): 有没有高效点的实现啊喂！！
+    const allPosts = Object.freeze<Post>( // TODO(@so1ve): 有没有高效点的实现啊喂！！
       await postsStorage.select(
         {},
         {

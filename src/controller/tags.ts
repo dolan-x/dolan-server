@@ -1,4 +1,7 @@
-import { log, RouterMiddleware, shared, Status, uniqolor } from "../../deps.ts";
+import * as log from "$log";
+import { Post } from "@dolan-x/shared";
+import uniqolor from "uniqolor";
+import { RouterMiddleware, Status } from "oak";
 
 import { getStorage } from "../lib/mod.ts";
 import {
@@ -94,7 +97,7 @@ export const getTagCount: RouterMiddleware<"/tags/:slug/count"> = async (
 ) => {
   const { slug } = ctx.params;
   log.info("Tags: Getting tag count - " + slug);
-  const allPosts: readonly shared.Post[] = Object.freeze( // TODO(@so1ve): 有没有高效点的实现啊喂！！
+  const allPosts = Object.freeze<Post>( // TODO(@so1ve): 有没有高效点的实现啊喂！！
     await postsStorage.select(
       {},
       {

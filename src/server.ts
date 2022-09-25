@@ -1,5 +1,9 @@
 // Copyright 2022 the Dolan authors. All rights reserved. MIT license.
-import { Application, colors, logger, oakCors, parseFlags } from "../deps.ts";
+import * as colors from "$colors";
+import { parse as parseFlags } from "$flags";
+import { Application } from "oak";
+import logger from "oak-logger";
+import { oakCors } from "cors";
 import { unprotectedRouter } from "./unprotected_routes.ts";
 import { protectedRouter } from "./protected_routes.ts";
 import { errorHandler, logMiddleware } from "./middleware/mod.ts";

@@ -1,4 +1,4 @@
-import { Status, STATUS_TEXT } from "../../deps.ts";
+import { Status, STATUS_TEXT } from "oak";
 
 type SuccessOptions = {
   code?: Status;

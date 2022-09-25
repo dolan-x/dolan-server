@@ -1,4 +1,5 @@
-import { log, RouterMiddleware, Status } from "../../deps.ts";
+import * as log from "$log";
+import { RouterMiddleware, Status } from "oak";
 
 import { getStorage } from "../lib/mod.ts";
 import {

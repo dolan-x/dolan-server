@@ -3,6 +3,7 @@
   "deno.lint": true,
   "deno.unstable": true,
   "deno.config": "deno.jsonc",
+  "deno.importMap": "./import_map.json",
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "denoland.vscode-deno",
   "deno.suggest.imports.hosts": {

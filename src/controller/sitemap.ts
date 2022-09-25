@@ -1,4 +1,6 @@
-import { log, RouterMiddleware, shared } from "../../deps.ts";
+import { Category, Post, Tag } from "@dolan-x/shared";
+import * as log from "$log";
+import { RouterMiddleware } from "oak";
 
 import { getStorage } from "../lib/mod.ts";
 import { createSitemapUrls, getConfig } from "../utils/mod.ts";
@@ -19,19 +21,19 @@ export const generateSitemap: RouterMiddleware<"/sitemap"> = async (ctx) => {
       {
         fields: ["slug"],
       },
-    ) as Promise<shared.Post[]>,
+    ) as Promise<Post[]>,
     tagsStorage.select(
       {},
       {
         fields: ["slug"],
       },
-    ) as Promise<shared.Tag[]>,
+    ) as Promise<Tag[]>,
     categoriesStorage.select(
       {},
       {
         fields: ["slug"],
       },
-    ) as Promise<shared.Category[]>,
+    ) as Promise<Category[]>,
     getConfig("functions"),
   ]);
   const { postsBaseUrl, tagsBaseUrl, categoriesBaseUrl } = config.sitemap;

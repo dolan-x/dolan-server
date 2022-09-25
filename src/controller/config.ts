@@ -1,11 +1,12 @@
-import { RouterMiddleware, shared, Status } from "../../deps.ts";
+import { Config } from "@dolan-x/shared";
+import { RouterMiddleware, Status } from "oak";
 
 import { getStorage } from "../lib/mod.ts";
 import { CLOUD_CONFIG_NAMES, cr, ensureRequestBody } from "../utils/mod.ts";
 
 const storage = getStorage("Config");
 
-function processConfigs(configs: shared.Config[]) {
+function processConfigs(configs: Config[]) {
   console.log(configs);
   return configs.reduce((a, b) => ({
     ...a,
@@ -15,7 +16,7 @@ function processConfigs(configs: shared.Config[]) {
 
 /** GET /config */
 export const getConfigs: RouterMiddleware<"/config"> = async (ctx) => {
-  const configs: shared.Config[] = (await storage.select(
+  const configs: Config[] = (await storage.select(
     {},
     {
       fields: [
