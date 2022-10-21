@@ -42,7 +42,7 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
   );
 
   const where: Record<string, any> = {};
-  if (!ctx.state.userInfo && !all) {
+  if (!(ctx.state.userInfo && all)) {
     where.status = ["!=", "draft"];
     where.hidden = false;
   }
