@@ -22,8 +22,6 @@
         "./src/",
         "./tests/",
         "./config.ts",
-        "./deps.ts",
-        "./deps.test.ts",
         "./deno.jsonc",
         "import_map.json"
       ]
@@ -40,8 +38,6 @@
         "./src/",
         "./tests/",
         "./config.ts",
-        "./deps.ts",
-        "./test_deps.ts",
         "./deno.jsonc",
         "import_map.json"
       ]
