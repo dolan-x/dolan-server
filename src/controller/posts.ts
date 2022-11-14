@@ -17,7 +17,7 @@ const postsStorage = getStorage("Posts");
 // TODO(@so1ve): 携带有合法JWT Token且query: draft=true时，返回内容包括草稿箱的文章
 /**
  * GET /posts
- * Query: pageSize, page, desc
+ * Query: pageSize, page, desc, tag
  */
 export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
   log.info("Posts: List posts");
@@ -27,7 +27,36 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
     desc = "updated",
     // TODO(@so1ve): Return all posts if logged in and ?all passed
     all,
+    tag,
   } = getQuery(ctx);
+  if (tag) {
+    log.info("Posts: Getting posts with tag: " + tag);
+    const allPosts = await postsStorage.select(
+      {},
+      {
+        desc,
+        fields: [
+          "slug",
+          "title",
+          "content",
+          "excerpt",
+          "sticky",
+          "status",
+          "authors",
+          "tags",
+          "categories",
+          "metas",
+          "created",
+          "updated",
+          "hidden",
+        ],
+      },
+    ) as Post[];
+    ctx.response.body = cr.success({
+      data: allPosts.filter((post) => post.tags.includes(tag)),
+    });
+    return;
+  }
   const paramPageSize = Number(_paramPageSize); // 每页文章数
   const { maxPageSize = 10 } = await getConfig("posts"); // 最大每页文章数
   const pageSize = getPageSize(maxPageSize, paramPageSize); // 最终每页文章数
