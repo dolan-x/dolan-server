@@ -1,4 +1,4 @@
-import { ConfigMapping, dittorm } from "dittorm";
+import Dittorm from "dittorm";
 import { config } from "../../config.ts";
 
 const configMapping = {
@@ -10,12 +10,23 @@ const configMapping = {
   deta: {
     projectKey: config.detaProjectKey,
   },
+  cloudbase: {
+    env: config.cloudbaseEnv,
+    secretId: config.cloudbaseSecretId,
+    secretKey: config.cloudbaseSecretKey,
+  },
 };
 
+// export const getStorage = (tableName: string) =>
+//   dittorm(config.storageType)(
+//     tableName,
+//     configMapping[config.storageType] as ConfigMapping[
+//       typeof config.storageType
+//     ],
+//   );
+
 export const getStorage = (tableName: string) =>
-  dittorm(config.storageType)(
+  Dittorm(config.storageType)(
     tableName,
-    configMapping[config.storageType] as ConfigMapping[
-      typeof config.storageType
-    ],
+    configMapping[config.storageType as keyof typeof configMapping],
   );
