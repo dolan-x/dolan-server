@@ -6,7 +6,7 @@ import { jwtKey } from "../lib/mod.ts";
 export const getUserInfo: RouterMiddleware<string> = async (ctx, next) => {
   const authHeader = ctx.request.headers.get("Authorization")!;
   if (!authHeader) {
-    ctx.state.userInfo = {};
+    ctx.state.userInfo = undefined;
     await next();
     return;
   }
