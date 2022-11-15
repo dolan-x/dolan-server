@@ -17,7 +17,7 @@ const postsStorage = getStorage("Posts");
 // TODO(@so1ve): 携带有合法JWT Token且query: draft=true时，返回内容包括草稿箱的文章
 /**
  * GET /posts
- * Query: pageSize, page, desc, tag
+ * Query: pageSize, page, desc, tag, all
  */
 export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
   log.info("Posts: List posts");
@@ -71,7 +71,7 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
   );
 
   const where: Record<string, any> = {};
-  if (!(ctx.state.userInfo && all)) {
+  if (!(ctx.state.userInfo && (all !== undefined))) {
     where.status = ["!=", "draft"];
     where.hidden = false;
   }
