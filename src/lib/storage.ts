@@ -1,3 +1,4 @@
+// @deno-types="npm:dittorm@1.0.0-beta.0/dist/src/index.d.ts"
 import Dittorm from "dittorm";
 import { config } from "../../config.ts";
 
