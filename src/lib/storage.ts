@@ -1,4 +1,5 @@
-import Dittorm, { SupportedStorages } from "dittorm";
+// @deno-types="npm:dittorm@1.0.0-beta.0/dist/src/index.d.ts"
+import Dittorm from "dittorm";
 import { config } from "../../config.ts";
 
 const configMapping = {
@@ -26,7 +27,7 @@ const configMapping = {
 //   );
 
 export const getStorage = (tableName: string) =>
-  Dittorm(config.storageType as SupportedStorages)(
+  Dittorm(config.storageType)(
     tableName,
-    configMapping[config.storageType as keyof typeof configMapping] as any,
+    configMapping[config.storageType as keyof typeof configMapping],
   );
