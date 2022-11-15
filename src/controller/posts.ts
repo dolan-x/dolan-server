@@ -126,9 +126,15 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
 /** GET /posts/{slug} */
 export const getPost: RouterMiddleware<"/posts/:slug"> = async (ctx) => {
   const { slug } = ctx.params;
+  const where: Record<string, any> = {
+    slug,
+  };
+  if (!ctx.state.userInfo) {
+    where.status = ["!=", "draft"];
+  }
   log.info("Posts: Getting post - " + slug);
   const post = (await postsStorage.select(
-    { slug },
+    where,
     {
       fields: [
         "slug",

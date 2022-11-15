@@ -43,7 +43,7 @@ export const getPages: RouterMiddleware<"/pages"> = async (ctx) => {
     "Posts: Getting posts - query " + prettyJSON(where),
   );
   const pages = await pagesStorage.select(
-    where, // TODO(@so1ve): 当用户有合法JWT Token时，可以返回隐藏的文章(Query: ?draft)
+    where,
     {
       desc: "updated", // 避免与Leancloud的字段冲突
       limit: pageSize,
