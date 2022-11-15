@@ -9,13 +9,12 @@
     "cors": "https://deno.land/x/cors@v1.2.2/mod.ts",
     "djwt": "https://deno.land/x/djwt@v2.4/mod.ts",
     "dittorm": "https://deno.land/x/dittorm@v0.3.0/mod.ts",
+    "lodash": "https://deno.land/x/lodash@4.17.15-es/lodash.js",
     "oak": "https://deno.land/x/oak@v10.5.0/mod.ts",
     "oak-middleware-jwt": "https://denopkg.com/halvardssm/oak-middleware-jwt@master/mod.ts",
     "oak-json-error": "https://denopkg.com/so1ve/oak-json-error@main/mod.ts",
     "oak-logger": "https://deno.land/x/oak_logger@1.0.0/mod.ts",
-    "dittorm-node": "npm:dittorm@1.0.0-beta.0/dist/src/index",
-    "lodash": "npm:lodash@4.17.15-es/lodash.js",
-    "hash-wasm": "npm:hash-wasm@4.9.0",
-    "uniqolor": "npm:uniqolor@1.0.2"
+    "hash-wasm": "https://esm.sh/hash-wasm@4.9.0?target=es2021&pin=v68",
+    "uniqolor": "https://esm.sh/uniqolor@1.0.2"
   }
 }
