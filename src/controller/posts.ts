@@ -29,10 +29,15 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
     all,
     tag,
   } = getQuery(ctx);
+  const where: Record<string, any> = {};
+  if (!(ctx.state.userInfo && (all !== undefined))) {
+    where.status = ["!=", "draft"];
+    where.hidden = false;
+  }
   if (tag) {
     log.info("Posts: Getting posts with tag: " + tag);
     const allPosts = await postsStorage.select(
-      {},
+      where,
       {
         desc,
         fields: [
@@ -69,12 +74,6 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
       all,
     }),
   );
-
-  const where: Record<string, any> = {};
-  if (!(ctx.state.userInfo && (all !== undefined))) {
-    where.status = ["!=", "draft"];
-    where.hidden = false;
-  }
   log.info(
     "Posts: Getting posts - query " + prettyJSON(where),
   );
