@@ -110,10 +110,11 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
   log.info(
     "Posts: Getting posts - count " + prettyJSON(postCount),
   );
+  // TODO(@so1ve): fix deta order
   const sortByDateString = (a: Post, b: Post, desc: "created" | "updated") => {
     const aDate = new Date(a[desc]);
     const bDate = new Date(b[desc]);
-    return aDate.getTime() - bDate.getTime();
+    return bDate.getTime() - aDate.getTime();
   };
   const orderPosts = (posts: Post[]) => {
     if (desc === "created") {
