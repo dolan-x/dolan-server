@@ -127,9 +127,9 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
     ) as Promise<Post[]>,
     postsStorage.count(where),
   ]);
-  // log.info(
-  //   "Posts: Getting posts - posts " + prettyJSON(posts),
-  // );
+  log.info(
+    "Posts: Getting posts - posts " + prettyJSON(posts),
+  );
   log.info(
     "Posts: Getting posts - count " + prettyJSON(postCount),
   );
