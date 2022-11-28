@@ -78,35 +78,12 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
   log.info(
     "Posts: Getting posts - query " + prettyJSON(where),
   );
-  const stickyPosts = await postsStorage.select(
-    { ...where, sticky: true },
-    {
-      desc, // 避免与Leancloud的字段冲突
-      limit: pageSize,
-      offset: Math.max((page - 1) * pageSize, 0),
-      fields: [
-        "slug",
-        "title",
-        "content",
-        "excerpt",
-        "sticky",
-        "status",
-        "authors",
-        "tags",
-        "categories",
-        "metas",
-        "created",
-        "updated",
-        "hidden",
-      ],
-    },
-  ) as Post[];
   const [posts, postCount] = await Promise.all([
     postsStorage.select(
-      { ...where, sticky: false },
+      where,
       {
         desc, // 避免与Leancloud的字段冲突
-        limit: Math.max(pageSize - stickyPosts.length, 0),
+        limit: pageSize,
         offset: Math.max((page - 1) * pageSize, 0),
         fields: [
           "slug",
@@ -127,16 +104,16 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
     ) as Promise<Post[]>,
     postsStorage.count(where),
   ]);
-  log.info(
-    "Posts: Getting posts - posts " + prettyJSON(posts),
-  );
+  // log.info(
+  //   "Posts: Getting posts - posts " + prettyJSON(posts),
+  // );
   log.info(
     "Posts: Getting posts - count " + prettyJSON(postCount),
   );
   ctx.response.body = cr.success({
     data: [
-      ...stickyPosts,
-      ...posts,
+      ...posts.filter((p) => p.sticky),
+      ...posts.filter((p) => !p.sticky),
     ],
     metas: {
       pages: Math.ceil(postCount / pageSize),
