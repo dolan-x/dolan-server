@@ -72,6 +72,7 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
       pageSize,
       page,
       all,
+      desc,
     }),
   );
   log.info(
