@@ -110,10 +110,21 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
   log.info(
     "Posts: Getting posts - count " + prettyJSON(postCount),
   );
+  const sortByDateString = (a: Post, b: Post, desc: "created" | "updated") => {
+    const aDate = new Date(a[desc]);
+    const bDate = new Date(b[desc]);
+    return aDate.getTime() - bDate.getTime();
+  };
+  const orderPosts = (posts: Post[]) => {
+    if (desc === "created") {
+      return posts.sort((a, b) => sortByDateString(a, b, "created"));
+    }
+    return posts.sort((a, b) => sortByDateString(a, b, "updated"));
+  };
   ctx.response.body = cr.success({
     data: [
-      ...posts.filter((p) => p.sticky),
-      ...posts.filter((p) => !p.sticky),
+      ...orderPosts(posts.filter((p) => p.sticky)),
+      ...orderPosts(posts.filter((p) => !p.sticky)),
     ],
     metas: {
       pages: Math.ceil(postCount / pageSize),
