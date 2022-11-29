@@ -110,22 +110,15 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
   log.info(
     "Posts: Getting posts - count " + prettyJSON(postCount),
   );
-  // TODO(@so1ve): fix deta order
-  const sortByDateString = (a: Post, b: Post, desc: "created" | "updated") => {
-    const aDate = new Date(a[desc]);
-    const bDate = new Date(b[desc]);
-    return bDate.getTime() - aDate.getTime();
-  };
-  const orderPosts = (posts: Post[]) => {
-    if (desc === "created") {
-      return posts.sort((a, b) => sortByDateString(a, b, "created"));
-    }
-    return posts.sort((a, b) => sortByDateString(a, b, "updated"));
-  };
+  const stickyPosts: Post[] = [];
+  const commonPosts: Post[] = [];
+  posts.forEach((post) => {
+    (post.sticky ? stickyPosts : commonPosts).push(post);
+  });
   ctx.response.body = cr.success({
     data: [
-      ...orderPosts(posts.filter((p) => p.sticky)),
-      ...orderPosts(posts.filter((p) => !p.sticky)),
+      ...stickyPosts,
+      ...commonPosts,
     ],
     metas: {
       pages: Math.ceil(postCount / pageSize),
@@ -192,8 +185,8 @@ export const createPost: RouterMiddleware<"/posts"> = async (ctx) => {
     hidden = false,
     status = "published",
     metas = {},
-    created = new Date().toISOString(),
-    updated = new Date().toISOString(),
+    created = Date.now(),
+    updated = Date.now(),
   } = requestBody;
   if (!slug) {
     log.error(`Posts: Creating post - Slug is required`);
