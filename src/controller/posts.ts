@@ -115,6 +115,14 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
   posts.forEach((post) => {
     (post.sticky ? stickyPosts : commonPosts).push(post);
   });
+  function autoSort(p1: Post, p2: Post) {
+    if (["created", "updated", "-created", "-updated"].includes(desc)) return 0;
+    const order = desc as keyof Post;
+    const comp = p1[order] > p2[order] ? -1 : 1;
+    return order.startsWith("-") ? -comp : comp;
+  }
+  stickyPosts.sort(autoSort);
+  commonPosts.sort(autoSort);
   ctx.response.body = cr.success({
     data: [
       ...stickyPosts,
