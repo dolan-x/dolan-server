@@ -110,10 +110,15 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
   log.info(
     "Posts: Getting posts - count " + prettyJSON(postCount),
   );
+  const stickyPosts: Post[] = [];
+  const commonPosts: Post[] = [];
+  posts.forEach((post) => {
+    (post.sticky ? stickyPosts : commonPosts).push(post);
+  });
   ctx.response.body = cr.success({
     data: [
-      ...posts.filter((p) => p.sticky),
-      ...posts.filter((p) => !p.sticky),
+      ...stickyPosts,
+      ...commonPosts,
     ],
     metas: {
       pages: Math.ceil(postCount / pageSize),
@@ -180,8 +185,8 @@ export const createPost: RouterMiddleware<"/posts"> = async (ctx) => {
     hidden = false,
     status = "published",
     metas = {},
-    created = new Date().toISOString(),
-    updated = new Date().toISOString(),
+    created = Date.now(),
+    updated = Date.now(),
   } = requestBody;
   if (!slug) {
     log.error(`Posts: Creating post - Slug is required`);
