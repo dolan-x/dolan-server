@@ -64,7 +64,7 @@ export const getTags: RouterMiddleware<"/tags"> = async (ctx) => {
   // log.info(
   //   "Tags: Getting tags - tags " + prettyJSON(tags),
   // );
-  .response.body = cr.success({ data: tags });
+  ctx.response.body = cr.success({ data: tags });
   log.info("Tags: Getting tags - success");
 };
 
