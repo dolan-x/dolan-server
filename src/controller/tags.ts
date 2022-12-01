@@ -40,6 +40,10 @@ export const getTags: RouterMiddleware<"/tags"> = async (ctx) => {
     }),
   );
   const where = {} as Record<string, any>;
+  if (slugs === "") {
+    ctx.response.body = cr.success({ data: [] });
+    return;
+  }
   if (slugs) {
     where.slug = ["IN", slugs.split(",")];
   }
@@ -60,7 +64,7 @@ export const getTags: RouterMiddleware<"/tags"> = async (ctx) => {
   // log.info(
   //   "Tags: Getting tags - tags " + prettyJSON(tags),
   // );
-  ctx.response.body = cr.success({ data: tags });
+  .response.body = cr.success({ data: tags });
   log.info("Tags: Getting tags - success");
 };
 
