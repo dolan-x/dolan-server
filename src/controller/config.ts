@@ -1,17 +1,12 @@
-import { Config } from "@dolan-x/shared";
 import { RouterMiddleware, Status } from "oak";
-
 import { getStorage } from "../lib/mod.ts";
 import { CLOUD_CONFIG_NAMES, cr, ensureRequestBody } from "../utils/mod.ts";
 
+type Config = { name: string; value: any };
 const storage = getStorage("Config");
 
 function processConfigs(configs: Config[]) {
-  console.log(configs);
-  return configs.reduce((a, b) => ({
-    ...a,
-    [b.name]: b.value,
-  }), {} as any);
+  return configs.reduce((a, b) => Object.assign(a, { [b.name]: b }), {} as any);
 }
 
 /** GET /config */

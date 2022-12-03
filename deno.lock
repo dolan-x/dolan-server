@@ -1017,6 +1017,7 @@
     "https://denopkg.com/so1ve/oak-json-error@main/mod.ts": "ac2feac72ee5d80bf2df01547abf4e4cdef5c2069544ba5d1908ab748f6903ee",
     "https://denopkg.com/so1ve/oak-json-error@main/src/middleware.ts": "008d332f99779d2d81035ba7fe8c23562771e1e8fd301343a52791261d42d10c",
     "https://esm.sh/@dolan-x/shared@0.0.19": "e3d49d3052f9d0275030e9a60fa364d8fc535b4609217325ded9d151caaf41d9",
+    "https://esm.sh/@dolan-x/shared@0.0.39": "3db91ed8bdeeabd831711110ebbf845d0ba0426d577f04a8066445a369c96dd9",
     "https://esm.sh/@leancloud/platform-adapters-node@1.5.2?target=es2021&pin=v68": "53b80bd8935c319231d96f562b449041041848b0aad366446a641384da874646",
     "https://esm.sh/deta@1.1.0?pin=v68": "0af89bf3165ce959192d5f3f1b3a8565fc4c2962e3e31314695b8f00a08576f6",
     "https://esm.sh/hash-wasm@4.9.0?target=es2021&pin=v68": "3b59e04e844ac0bd07c4ac835d9f7e1934ac0ba85518c0eb65059e7e76ad92e6",
@@ -1108,6 +1109,8 @@
     "https://esm.sh/v96/@dolan-x/shared@0.0.19/deno/shared.js": "4bfa810a559106a003d366821de9dde5bdc9f0b244372693ed1cc879adf7a6d5",
     "https://esm.sh/v96/@dolan-x/shared@0.0.19/dist/index.d.ts": "9bae1b271d7054d6126003a7c7272a67f8eda0c69e1a481ca8b51dd6f2b1fe06",
     "https://esm.sh/v96/uniqolor@1.0.2/deno/uniqolor.js": "dc282112c6ee3e5312f21450bfc920c5eed05d89448721253fd3329f7e82d55a",
-    "https://esm.sh/v96/uniqolor@1.0.2/src/index.d.ts": "58ba6883070fb671b0b27f450addf0af2c8bc78fef69b94e9a9fa65c0619a6de"
+    "https://esm.sh/v96/uniqolor@1.0.2/src/index.d.ts": "58ba6883070fb671b0b27f450addf0af2c8bc78fef69b94e9a9fa65c0619a6de",
+    "https://esm.sh/v99/@dolan-x/shared@0.0.39/deno/shared.js": "52aaa1a31152215b14a06932ad64120a1f150044df4855088269895177aae76b",
+    "https://esm.sh/v99/@dolan-x/shared@0.0.39/dist/index.d.ts": "e7688a9a01314151878d19a9863c4af16b8e88a019f27911288bb92626acb94d"
   }
 }
