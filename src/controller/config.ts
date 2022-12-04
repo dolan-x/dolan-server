@@ -6,7 +6,6 @@ type Config = { name: string; value: any };
 const storage = getStorage("Config");
 
 function processConfigs(configs: Config[]) {
-  console.log(configs);
   return configs.reduce((a, b) => ({
     ...a,
     [b.name]: b.value,
