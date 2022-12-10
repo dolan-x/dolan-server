@@ -258,7 +258,10 @@ export const updatePost: RouterMiddleware<"/posts/:slug"> = async (ctx) => {
     ctx.throw(Status.NotFound, `Post(Slug: ${slug}) does not exist`);
     return;
   }
-  if (await checkExists(postsStorage, requestBody.slug)) {
+  if (
+    await checkExists(postsStorage, requestBody.slug) &&
+    requestBody.slug !== slug
+  ) {
     log.error(
       `Posts: Updating post - Post to be updated(Slug: ${requestBody.slug}) already exists`,
     );

@@ -138,7 +138,10 @@ export const updateCategory: RouterMiddleware<"/categories/:slug"> = async (
     ctx.throw(Status.NotFound, `Category(Slug: ${slug}) does not exist`);
     return;
   }
-  if (await checkExists(categoriesStorage, requestBody.slug)) {
+  if (
+    await checkExists(categoriesStorage, requestBody.slug) &&
+    requestBody.slug !== slug
+  ) {
     log.error(
       `Categories: Updating category - Category to be updated(Slug: ${requestBody.slug}) already exists`,
     );

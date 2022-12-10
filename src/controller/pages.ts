@@ -129,7 +129,10 @@ export const updatePage: RouterMiddleware<"/pages/:slug"> = async (ctx) => {
     ctx.throw(Status.NotFound, `Page(Slug: ${slug}) does not exist`);
     return;
   }
-  if (await checkExists(pagesStorage, requestBody.slug)) {
+  if (
+    await checkExists(pagesStorage, requestBody.slug) &&
+    requestBody.slug !== slug
+  ) {
     log.error(
       `Pages: Updating page - Page to be updated(Slug: ${requestBody.slug}) already exists`,
     );

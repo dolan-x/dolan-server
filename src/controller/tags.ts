@@ -149,7 +149,10 @@ export const updateTag: RouterMiddleware<"/tags/:slug"> = async (ctx) => {
     ctx.throw(Status.NotFound, `Tag(Slug: ${slug}) does not exist`);
     return;
   }
-  if (await checkExists(tagsStorage, requestBody.slug)) {
+  if (
+    await checkExists(tagsStorage, requestBody.slug) &&
+    requestBody.slug !== slug
+  ) {
     log.error(
       `Tags: Updating tag - Tag to be updated(Slug: ${requestBody.slug}) already exists`,
     );
