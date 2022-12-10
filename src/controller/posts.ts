@@ -30,11 +30,16 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
     // TODO(@so1ve): Return all posts if logged in and ?all passed
     all,
     tag,
+    category,
   } = getQuery(ctx);
   const where: Record<string, any> = {};
   if (!(ctx.state.userInfo && (all !== undefined))) {
     where.status = ["!=", "draft"];
     where.hidden = false;
+  }
+  if (category) {
+    log.info("Posts: Getting posts with category: " + category);
+    where.category = category;
   }
   if (tag) {
     log.info("Posts: Getting posts with tag: " + tag);
