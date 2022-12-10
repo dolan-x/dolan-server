@@ -15,20 +15,10 @@ const postsStorage = getStorage("Posts");
 
 /** GET /authors */
 export const getAuthors: RouterMiddleware<"/authors"> = async (ctx) => {
-  const {
-    pageSize: _paramPageSize,
-    page: _paramPage = 0,
-  } = getQuery(ctx);
-  const paramPageSize = Number(_paramPageSize); // 每页作者数
-  const { maxPageSize = 10 } = await getConfig("authors"); // 最大每页作者数
-  const pageSize = getPageSize(maxPageSize, paramPageSize); // 最终每页作者数
-  const page = Number(_paramPage); // 当前页数
   const authors = await authorsStorage.select(
     {},
     {
       desc: "created",
-      limit: pageSize,
-      offset: Math.max((page - 1) * pageSize, 0),
       fields: [
         "slug",
         "name",

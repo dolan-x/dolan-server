@@ -4,15 +4,8 @@ import uniqolor from "uniqolor";
 import { RouterMiddleware, Status } from "oak";
 
 import { getStorage } from "../lib/mod.ts";
-import {
-  cr,
-  ensureRequestBody,
-  getConfig,
-  getLimit,
-  getPageSize,
-  getQuery,
-  prettyJSON,
-} from "../utils/mod.ts";
+import { cr, ensureRequestBody, getQuery, prettyJSON } from "../utils/mod.ts";
+import { checkExists } from "../utils/check_exists.ts";
 
 const tagsStorage = getStorage("Tags");
 const postsStorage = getStorage("Posts");
@@ -21,24 +14,8 @@ const postsStorage = getStorage("Posts");
 export const getTags: RouterMiddleware<"/tags"> = async (ctx) => {
   log.info("Tags: List tags");
   const {
-    pageSize: _paramPageSize,
-    page: _paramPage = 0,
-    all,
     slugs,
   } = getQuery(ctx);
-  const paramPageSize = Number(_paramPageSize); // 每页标签数
-  const { maxPageSize = 10 } = await getConfig("tags"); // 最大每页标签数
-  const pageSize = getPageSize(maxPageSize, paramPageSize); // 最终每页标签数
-  const page = Number(_paramPage); // 当前页数
-  const limit = getLimit(ctx, all, pageSize);
-  log.info(
-    "Tags: Getting tags - info " + prettyJSON({
-      maxPageSize,
-      pageSize,
-      page,
-      slugs,
-    }),
-  );
   const where = {} as Record<string, any>;
   if (slugs === "") {
     ctx.response.body = cr.success({ data: [] });
@@ -51,8 +28,6 @@ export const getTags: RouterMiddleware<"/tags"> = async (ctx) => {
     where,
     {
       desc: "updated", // 避免与Leancloud的字段冲突
-      limit,
-      offset: Math.max((page - 1) * pageSize, 0),
       fields: [
         "slug",
         "name",
@@ -145,10 +120,7 @@ export const createTag: RouterMiddleware<"/tags"> = async (ctx) => {
     log.error(`Tags: Creating tag - Slug or Name is required`);
     ctx.throw(Status.BadRequest, `Slug or Name is required`);
   }
-  const duplicate = await tagsStorage.select({
-    slug,
-  });
-  if (duplicate.length) {
+  if (await checkExists(tagsStorage, slug)) {
     log.error(`Tags: Creating tag - Tag(Slug: ${slug}) already exists`);
     ctx.throw(Status.Conflict, `Tag(Slug: ${slug}) already exists`);
     return;
@@ -172,10 +144,19 @@ export const updateTag: RouterMiddleware<"/tags/:slug"> = async (ctx) => {
   const { slug } = ctx.params;
   log.info("Tags: Updating tag - slug " + slug);
   log.info("Tags: Updating tag - body " + prettyJSON(requestBody));
-  const exists = (await tagsStorage.select({ slug }))[0];
-  if (!exists) {
+  if (!await checkExists(tagsStorage, slug)) {
     log.error(`Tags: Updating tag - Tag(Slug: ${slug}) does not exist`);
     ctx.throw(Status.NotFound, `Tag(Slug: ${slug}) does not exist`);
+    return;
+  }
+  if (await checkExists(tagsStorage, requestBody.slug)) {
+    log.error(
+      `Tags: Updating tag - Tag to be updated(Slug: ${requestBody.slug}) already exists`,
+    );
+    ctx.throw(
+      Status.Conflict,
+      `Tag to be updated(Slug: ${requestBody.slug}) already exists`,
+    );
     return;
   }
   const resp = await tagsStorage.update(
@@ -190,8 +171,7 @@ export const updateTag: RouterMiddleware<"/tags/:slug"> = async (ctx) => {
 export const deleteTag: RouterMiddleware<"/tags/:slug"> = async (ctx) => {
   const { slug } = ctx.params;
   log.info("Tags: Deleting tag - slug " + slug);
-  const exists = (await tagsStorage.select({ slug }))[0];
-  if (!exists) {
+  if (!await checkExists(tagsStorage, slug)) {
     log.error(`Tags: Deleting tag - Tag(Slug: ${slug}) does not exist`);
     ctx.throw(Status.NotFound, `Tag(Slug: ${slug}) does not exist`);
     return;

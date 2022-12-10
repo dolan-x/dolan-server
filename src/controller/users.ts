@@ -1,6 +1,6 @@
 import * as log from "$log";
 import { RouterMiddleware, Status } from "oak";
-import { create as createJwt, getNumericDate } from "djwt";
+import { create as createJwt } from "djwt";
 
 import { getStorage, jwtKey } from "../lib/mod.ts";
 import {

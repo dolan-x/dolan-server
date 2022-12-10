@@ -4,14 +4,8 @@ import { Post } from "@dolan-x/shared";
 import { RouterMiddleware, Status } from "oak";
 
 import { getStorage } from "../lib/mod.ts";
-import {
-  cr,
-  ensureRequestBody,
-  getConfig,
-  getPageSize,
-  getQuery,
-  prettyJSON,
-} from "../utils/mod.ts";
+import { checkExists } from "../utils/check_exists.ts";
+import { cr, ensureRequestBody, prettyJSON } from "../utils/mod.ts";
 
 const categoriesStorage = getStorage("Categories");
 const postsStorage = getStorage("Posts");
@@ -19,31 +13,12 @@ const postsStorage = getStorage("Posts");
 /** GET /categories */
 export const getCategories: RouterMiddleware<"/categories"> = async (ctx) => {
   log.info("Categories: List categories");
-  const {
-    pageSize: _paramPageSize,
-    page: _paramPage = 0,
-    all,
-  } = getQuery(ctx);
-  const paramPageSize = Number(_paramPageSize); // 每页分类数
-  const { maxPageSize = 10 } = await getConfig("categories"); // 最大每页分类数
-  const pageSize = getPageSize(maxPageSize, paramPageSize); // 最终每页分类数
-  const page = Number(_paramPage); // 当前页数
-  const limit = (ctx.state.userInfo && all !== undefined)
-    ? undefined
-    : pageSize;
-  log.info(
-    "Categories: Getting categories - info " + prettyJSON({
-      maxPageSize,
-      pageSize,
-      page,
-    }),
-  );
+
+  // log.info("Categories: Getting categories");
   const categories = await categoriesStorage.select(
     {},
     {
       desc: "updated", // 避免与Leancloud的字段冲突
-      limit,
-      offset: Math.max((page - 1) * pageSize, 0),
       fields: [
         "slug",
         "name",
@@ -51,9 +26,6 @@ export const getCategories: RouterMiddleware<"/categories"> = async (ctx) => {
       ],
     },
   );
-  // log.info(
-  //   "Categories: Getting categories - categories " + prettyJSON(categories),
-  // );
   ctx.response.body = cr.success({ data: categories });
   log.info("Categories: Getting categories - success ");
 };
@@ -132,8 +104,7 @@ export const createCategory: RouterMiddleware<"/categories"> = async (ctx) => {
     log.error(`Categories: Creating category - Slug or Name is required`);
     ctx.throw(Status.BadRequest, `Slug or Name is required`);
   }
-  const duplicate = await categoriesStorage.select({ slug });
-  if (duplicate.length) {
+  if (await checkExists(categoriesStorage, slug)) {
     log.error(
       `Categories: Creating category - Category(Slug: ${slug}) already exists`,
     );
@@ -160,12 +131,21 @@ export const updateCategory: RouterMiddleware<"/categories/:slug"> = async (
   const { slug } = ctx.params;
   log.info("Categories: Updating category - slug " + slug);
   log.info("Categories: Updating category - body " + prettyJSON(requestBody));
-  const exists = (await categoriesStorage.select({ slug }))[0];
-  if (!exists) {
+  if (!await checkExists(categoriesStorage, slug)) {
     log.error(
       `Categories: Updating category - Category(Slug: ${slug}) does not exist`,
     );
     ctx.throw(Status.NotFound, `Category(Slug: ${slug}) does not exist`);
+    return;
+  }
+  if (await checkExists(categoriesStorage, requestBody.slug)) {
+    log.error(
+      `Categories: Updating category - Category to be updated(Slug: ${requestBody.slug}) already exists`,
+    );
+    ctx.throw(
+      Status.Conflict,
+      `Category to be updated(Slug: ${requestBody.slug}) already exists`,
+    );
     return;
   }
   const resp = await categoriesStorage.update(
@@ -182,8 +162,7 @@ export const deleteCategory: RouterMiddleware<"/categories/:slug"> = async (
 ) => {
   const { slug } = ctx.params;
   log.info("Categories: Deleting category - slug " + slug);
-  const exists = (await categoriesStorage.select({ slug }))[0];
-  if (!exists) {
+  if (!await checkExists(categoriesStorage, slug)) {
     log.error(
       `Categories: Deleting category - Category(Slug: ${slug}) does not exist`,
     );

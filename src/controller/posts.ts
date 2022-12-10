@@ -11,6 +11,8 @@ import {
   getQuery,
   prettyJSON,
 } from "../utils/mod.ts";
+import { config } from "../../config.ts";
+import { checkExists } from "../utils/check_exists.ts";
 
 const postsStorage = getStorage("Posts");
 
@@ -49,7 +51,7 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
           "status",
           "authors",
           "tags",
-          "categories",
+          "category",
           "metas",
           "created",
           "updated",
@@ -64,8 +66,9 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
   }
   const paramPageSize = Number(_paramPageSize); // 每页文章数
   const { maxPageSize = 10 } = await getConfig("posts"); // 最大每页文章数
-  const pageSize = getPageSize(maxPageSize, paramPageSize); // 最终每页文章数
+  let pageSize: number | undefined = getPageSize(maxPageSize, paramPageSize); // 最终每页文章数
   const page = Number(_paramPage); // 当前页数
+  let offset: number | undefined = Math.max((page - 1) * pageSize, 0);
   log.info(
     "Posts: Getting posts - info " + prettyJSON({
       maxPageSize,
@@ -78,13 +81,17 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
   log.info(
     "Posts: Getting posts - query " + prettyJSON(where),
   );
+  if (all !== undefined) {
+    pageSize = undefined;
+    offset = undefined;
+  }
   const [posts, postCount] = await Promise.all([
     postsStorage.select(
       where,
       {
         desc, // 避免与Leancloud的字段冲突
         limit: pageSize,
-        offset: Math.max((page - 1) * pageSize, 0),
+        offset,
         fields: [
           "slug",
           "title",
@@ -94,7 +101,7 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
           "status",
           "authors",
           "tags",
-          "categories",
+          "category",
           "metas",
           "created",
           "updated",
@@ -121,19 +128,23 @@ export const getPosts: RouterMiddleware<"/posts"> = async (ctx) => {
     return b[desc] - a[desc];
   };
   const orderPosts = (posts: Post[]) => {
+    if (config.storageType !== "deta") return posts;
     if (desc === "created") {
       return posts.sort((a, b) => sortByDate(a, b, "created"));
     }
     return posts.sort((a, b) => sortByDate(a, b, "updated"));
   };
+  const metas = pageSize
+    ? {
+      pages: Math.ceil(postCount / pageSize),
+    }
+    : undefined;
   ctx.response.body = cr.success({
     data: [
       ...orderPosts(stickyPosts),
       ...orderPosts(commonPosts),
     ],
-    metas: {
-      pages: Math.ceil(postCount / pageSize),
-    },
+    metas,
   });
   log.info("Posts: Getting posts - success");
 };
@@ -161,7 +172,7 @@ export const getPost: RouterMiddleware<"/posts/:slug"> = async (ctx) => {
         "status",
         "authors",
         "tags",
-        "categories",
+        "category",
         "metas",
         "created",
         "updated",
@@ -191,7 +202,7 @@ export const createPost: RouterMiddleware<"/posts"> = async (ctx) => {
     content = "",
     authors = [],
     tags = [],
-    categories = [],
+    category = "",
     sticky = false,
     hidden = false,
     status = "published",
@@ -204,16 +215,13 @@ export const createPost: RouterMiddleware<"/posts"> = async (ctx) => {
     ctx.throw(Status.BadRequest, "Slug is required");
     return;
   }
-  const duplicate = await postsStorage.select({
-    slug,
-  });
-  if (duplicate.length) {
+  if (await checkExists(postsStorage, slug)) {
     log.error(`Posts: Creating post - Post(Slug: ${slug}) already exists`);
     ctx.throw(Status.Conflict, `Post(Slug: ${slug}) already exists`);
   }
   let { excerpt = "" } = requestBody;
   log.info("Posts: Creating post - original excerpt " + excerpt);
-  if (!excerpt) {
+  if (excerpt === undefined) {
     excerpt = content.slice(0, 100); // 没有摘要则截取前100个字符
     log.info("Posts: Creating post - excerpt " + excerpt);
   }
@@ -224,7 +232,7 @@ export const createPost: RouterMiddleware<"/posts"> = async (ctx) => {
     excerpt,
     authors,
     tags,
-    categories,
+    category,
     sticky,
     hidden,
     status,
@@ -245,10 +253,19 @@ export const updatePost: RouterMiddleware<"/posts/:slug"> = async (ctx) => {
   const { slug } = ctx.params;
   log.info("Posts: Updating post - slug " + slug);
   log.info("Posts: Updating post - body " + prettyJSON(requestBody));
-  const exists = await postsStorage.select({ slug });
-  if (!exists.length) {
+  if (!await checkExists(postsStorage, slug)) {
     log.error(`Posts: Updating post - Post(Slug: ${slug}) does not exist`);
     ctx.throw(Status.NotFound, `Post(Slug: ${slug}) does not exist`);
+    return;
+  }
+  if (await checkExists(postsStorage, requestBody.slug)) {
+    log.error(
+      `Posts: Updating post - Post to be updated(Slug: ${requestBody.slug}) already exists`,
+    );
+    ctx.throw(
+      Status.Conflict,
+      `Post to be updated(Slug: ${requestBody.slug}) already exists`,
+    );
     return;
   }
   const resp = await postsStorage.update(
@@ -263,8 +280,7 @@ export const updatePost: RouterMiddleware<"/posts/:slug"> = async (ctx) => {
 export const deletePost: RouterMiddleware<"/posts/:slug"> = async (ctx) => {
   const { slug } = ctx.params;
   log.info("Posts: Deleting post - slug " + slug);
-  const exists = (await postsStorage.select({ slug }))[0];
-  if (!exists) {
+  if (!await (checkExists(postsStorage, slug))) {
     log.error(`Posts: Deleting post - Post(Slug: ${slug}) does not exist`);
     ctx.throw(Status.NotFound, `Post(Slug: ${slug}) does not exist`);
     return;

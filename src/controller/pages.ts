@@ -2,6 +2,7 @@ import * as log from "$log";
 import { RouterMiddleware, Status } from "oak";
 
 import { getStorage } from "../lib/mod.ts";
+import { checkExists } from "../utils/check_exists.ts";
 import {
   cr,
   ensureRequestBody,
@@ -100,10 +101,7 @@ export const createPage: RouterMiddleware<"/pages"> = async (ctx) => {
     ctx.throw(Status.BadRequest, "Slug is required");
     return;
   }
-  const duplicate = await pagesStorage.select({
-    slug,
-  });
-  if (duplicate.length) {
+  if (await checkExists(pagesStorage, slug)) {
     log.error(`Pages: Creating page - Page(Slug: ${slug}) already exists`);
     ctx.throw(Status.Conflict, `Page(Slug: ${slug}) already exists`);
   }
@@ -126,10 +124,19 @@ export const updatePage: RouterMiddleware<"/pages/:slug"> = async (ctx) => {
   const { slug } = ctx.params;
   log.info("Pages: Updating page - slug " + slug);
   log.info("Pages: Updating page - body " + prettyJSON(requestBody));
-  const exists = (await pagesStorage.select({ slug }))[0];
-  if (!exists) {
+  if (!await checkExists(pagesStorage, slug)) {
     log.error(`Pages: Updating page - Page(Slug: ${slug}) does not exist`);
     ctx.throw(Status.NotFound, `Page(Slug: ${slug}) does not exist`);
+    return;
+  }
+  if (await checkExists(pagesStorage, requestBody.slug)) {
+    log.error(
+      `Pages: Updating page - Page to be updated(Slug: ${requestBody.slug}) already exists`,
+    );
+    ctx.throw(
+      Status.Conflict,
+      `Page to be updated(Slug: ${requestBody.slug}) already exists`,
+    );
     return;
   }
   const resp = await pagesStorage.update(
@@ -144,8 +151,7 @@ export const updatePage: RouterMiddleware<"/pages/:slug"> = async (ctx) => {
 export const deletePage: RouterMiddleware<"/pages/:slug"> = async (ctx) => {
   const { slug } = ctx.params;
   log.info("Pages: Deleting page - slug " + slug);
-  const exists = (await pagesStorage.select({ slug }))[0];
-  if (!exists) {
+  if (!await checkExists(pagesStorage, slug)) {
     log.error(`Pages: Deleting page - Page(Slug: ${slug}) does not exist`);
     ctx.throw(Status.NotFound, `Page(Slug: ${slug}) does not exist`);
     return;

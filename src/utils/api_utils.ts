@@ -34,12 +34,6 @@ export function getQuery(ctx: Context) {
   );
 }
 
-const configStorage = getStorage("Config");
-export async function getConfig(name: string) {
-  const configObj = (await configStorage.select({ name }))[0];
-  return configObj.value;
-}
-
 export function getPageSize(maxPageSize: number, paramPageSize: number) {
   return paramPageSize
     ? (paramPageSize >= maxPageSize ? maxPageSize : paramPageSize)
