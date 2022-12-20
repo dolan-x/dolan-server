@@ -92,6 +92,41 @@ export const createInjection: RouterMiddleware<"/injections"> = async (
   log.info("Injections: Creating injection - success");
 };
 
+/** PUT /injections */
+
+export const updateInjections: RouterMiddleware<"/injections"> = async (
+  ctx,
+) => {
+  log.info("Injections: Updating injections");
+  const requestBody = await ensureRequestBody(ctx);
+  log.info("Injections: Updating injections - body " + prettyJSON(requestBody));
+
+  if (!requestBody) {
+    log.error("Injections: Updating injections - Injections is required");
+    ctx.throw(Status.BadRequest, "Injections is required");
+    return;
+  }
+
+  const result = await Promise.all(requestBody.map(async (injection: any) => {
+    const { name, value } = injection;
+    if (!await checkExists(storage, { name })) {
+      log.error(
+        `Injections: Updating injections - Injection(Name: ${name}) does not exist`,
+      );
+      ctx.throw(Status.NotFound, `Injection(Name: ${name}) does not exist`);
+      return;
+    }
+
+    return await storage.update(
+      { name, value },
+      { name },
+    );
+  }));
+
+  ctx.response.body = cr.success({ data: result });
+  log.info("Injections: Updating injections - success");
+};
+
 /** PUT /injections/{name} */
 export const updateInjection: RouterMiddleware<"/injections/:name"> = async (
   ctx,

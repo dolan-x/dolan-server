@@ -74,6 +74,9 @@ protectedRouter.post(`/init`, init.init);
 // Create injection
 protectedRouter.post(`/injections`, injections.createInjection);
 
+// Update injections
+protectedRouter.put(`/injections`, injections.updateInjections);
+
 // Update injection
 protectedRouter.put(`/injections/:name`, injections.updateInjection);
 
