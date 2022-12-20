@@ -84,17 +84,14 @@ export const loginUser: RouterMiddleware<"/users/login"> = async (ctx) => {
   log.info("Users: Logging in - user " + username);
   const user: User = (await storage.select({ username }))[0];
   if (!user) {
-    ctx.throw(Status.BadRequest, `User(UserName: ${username}) does not exist`);
+    ctx.throw(Status.BadRequest, `Wrong username or password`);
     log.error(
       `Users: Logging in - User(UserName: ${username}) does not exist`,
     );
     return;
   }
   if (!await argon2Verify({ password, hash: user.password })) {
-    ctx.throw(
-      Status.BadRequest,
-      `User(UserName: ${username})'s password is incorrect`,
-    );
+    ctx.throw(Status.BadRequest, `Wrong username or password`);
     log.error(
       `Users: Logging in - User(UserName: ${username})'s password is incorrect`,
     );

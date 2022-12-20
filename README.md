@@ -24,4 +24,6 @@ Then, select the file:
 
 Click "Add Env Variable".
 
-> TODO
+## TODOS
+
+- [ ] Schema validation

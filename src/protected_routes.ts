@@ -5,6 +5,7 @@ import {
   categories,
   config,
   init,
+  injections,
   pages,
   posts,
   tags,
@@ -69,5 +70,14 @@ protectedRouter.put(`/users`, users.updateUser);
 
 // Init
 protectedRouter.post(`/init`, init.init);
+
+// Create injection
+protectedRouter.post(`/injections`, injections.createInjection);
+
+// Update injection
+protectedRouter.put(`/injections/:name`, injections.updateInjection);
+
+// Delete injection
+protectedRouter.delete(`/injections/:name`, injections.deleteInjection);
 
 export { protectedRouter };

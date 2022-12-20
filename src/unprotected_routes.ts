@@ -5,6 +5,7 @@ import {
   categories,
   config,
   init,
+  injections,
   pages,
   posts,
   sitemap,
@@ -76,5 +77,11 @@ unprotectedRouter.get("/sitemap", sitemap.generateSitemap);
 
 // Init
 unprotectedRouter.get("/init", init.getInitStatus);
+
+// Injection list
+unprotectedRouter.get("/injections", injections.getInjections);
+
+// Injection detail
+unprotectedRouter.get("/injections/:name", injections.getInjection);
 
 export { unprotectedRouter };
