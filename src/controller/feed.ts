@@ -1,4 +1,5 @@
 import { ConfigSite, Post } from "@dolan-x/shared";
+import { renderMarkdownSync } from "@dolan-x/markdown-renderer";
 import { Feed } from "feed";
 import * as log from "$log";
 import { RouterMiddleware } from "oak";
@@ -38,7 +39,7 @@ export const generateFeed: RouterMiddleware<"/feed"> = async (ctx) => {
       id: slug,
       link: `${postsBaseUrl}/${slug}`,
       description: excerpt,
-      content,
+      content: renderMarkdownSync(content),
       date: new Date(updated),
     });
   });

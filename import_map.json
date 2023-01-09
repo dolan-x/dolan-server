@@ -6,6 +6,7 @@
     "$dotenv": "https://deno.land/std@0.130.0/dotenv/mod.ts",
     "$log": "https://deno.land/std@0.147.0/log/mod.ts",
     "@dolan-x/shared": "https://esm.sh/@dolan-x/shared@0.0.46",
+    "@dolan-x/markdown-renderer": "https://esm.sh/@dolan-x/markdown-renderer@0.0.46",
     "cors": "https://deno.land/x/cors@v1.2.2/mod.ts",
     "djwt": "https://deno.land/x/djwt@v2.4/mod.ts",
     "dittorm": "https://deno.land/x/dittorm@v0.3.2/mod.ts",
