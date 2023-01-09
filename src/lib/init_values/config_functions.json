@@ -2,6 +2,7 @@
   "sitemap": {
     "postsBaseUrl": "https://example.com/posts",
     "categoriesBaseUrl": "https://example.com/categories",
-    "tagsBaseUrl": "https://example.com/tags"
+    "tagsBaseUrl": "https://example.com/tags",
+    "pagesBaseUrl": "https://example.com/pages"
   }
 }
