@@ -1,5 +1,10 @@
 {
   "name": "Dolan Site",
   "description": "Dolan Site",
-  "keywords": []
+  "keywords": [],
+  "url": "https://example.com",
+  "postsBaseUrl": "https://example.com/posts",
+  "categoriesBaseUrl": "https://example.com/categories",
+  "tagsBaseUrl": "https://example.com/tags",
+  "pagesBaseUrl": "https://example.com/pages"
 }

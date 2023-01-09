@@ -1,5 +1,4 @@
 import { Context, helpers, Status } from "oak";
-import { getStorage } from "../lib/mod.ts";
 
 export const createSitemapUrls = <T extends { slug: string }>(
   objs: T[],

@@ -4,6 +4,7 @@ import {
   authors,
   categories,
   config,
+  feed,
   init,
   injections,
   pages,
@@ -83,5 +84,8 @@ unprotectedRouter.get("/injections", injections.getInjections);
 
 // Injection detail
 unprotectedRouter.get("/injections/:name", injections.getInjection);
+
+// Feed
+unprotectedRouter.get("/feed", feed.generateFeed);
 
 export { unprotectedRouter };

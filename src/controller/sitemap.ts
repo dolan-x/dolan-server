@@ -1,4 +1,4 @@
-import { Category, Page, Post, Tag } from "@dolan-x/shared";
+import { Category, ConfigSite, Page, Post, Tag } from "@dolan-x/shared";
 import * as log from "$log";
 import { RouterMiddleware } from "oak";
 
@@ -12,7 +12,6 @@ const pagesStorage = getStorage("Pages");
 
 /**
  * GET /sitemap
- * Query: postsBaseUrl, tagsBaseUrl, categoriesBaseUrl
  */
 export const generateSitemap: RouterMiddleware<"/sitemap"> = async (ctx) => {
   log.info("Sitemap: Generating sitemap");
@@ -41,10 +40,9 @@ export const generateSitemap: RouterMiddleware<"/sitemap"> = async (ctx) => {
         fields: ["slug"],
       },
     ) as Promise<Page[]>,
-    getConfig("functions"),
+    getConfig("site") as Promise<ConfigSite>,
   ]);
-  const { postsBaseUrl, tagsBaseUrl, pagesBaseUrl, categoriesBaseUrl } =
-    config.sitemap;
+  const { postsBaseUrl, tagsBaseUrl, pagesBaseUrl, categoriesBaseUrl } = config;
   // deno-fmt-ignore
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
   <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">

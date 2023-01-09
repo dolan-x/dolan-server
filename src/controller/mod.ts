@@ -8,3 +8,4 @@ export * as users from "./users.ts";
 export * as init from "./init.ts";
 export * as sitemap from "./sitemap.ts";
 export * as injections from "./injections.ts";
+export * as feed from "./feed.ts";
