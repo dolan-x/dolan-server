@@ -17,7 +17,7 @@ export const generateFeed: RouterMiddleware<"/feed"> = async (ctx) => {
     postsStorage.select(
       { status: ["!=", "draft"] },
       {
-        fields: ["slug"],
+        fields: ["title", "slug", "excerpt", "content", "updated"],
       },
     ) as Promise<Post[]>,
     getConfig("site") as Promise<ConfigSite>,
